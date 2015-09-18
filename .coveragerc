@@ -1,0 +1,3 @@
+[run]
+include = asg/*
+omit = *migrations*
