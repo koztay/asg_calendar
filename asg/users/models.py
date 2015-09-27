@@ -11,10 +11,10 @@ from django.core.validators import RegexValidator
 
 @python_2_unicode_compatible
 class User(AbstractUser):
-    phone_regex = RegexValidator(regex=r'^\+?1?\d{9,15}$', message=(
-        "Numer telefonu musi zostać wpisany w formacie: '+999999999'."))
-    phone_number = models.CharField(validators=[phone_regex], max_length=255,
-                                    blank=True)  # validators should be a list
+    # phone_regex = RegexValidator(regex=r'^\+?1?\d{9,15}$', message=(
+    #     "Numer telefonu musi zostać wpisany w formacie: '+999999999'."))
+    # phone_number = models.CharField(validators=[phone_regex], max_length=255,
+    #                                 blank=True)  # validators should be a list
 
     # First Name and Last Name do not cover name patterns
     # around the globe.

@@ -54,17 +54,30 @@ class PGroup(models.Model):
         return self.name
 
 
+class Faction(models.Model):
+    event = models.ForeignKey(Event)
+    name = models.CharField(max_length=255)
+
+    class Meta:
+        verbose_name = 'frakcja'
+        verbose_name_plural = 'frakcje'
+
+    def __str__(self):
+        return '{0} - {1}'.format(self.event, self.name)
+
+
 class Slot(models.Model):
     name = models.CharField(max_length=200, verbose_name='nazwa',
                             blank=False, null=False)
-    event = models.ForeignKey(Event)
+    # event = models.ForeignKey(Event)
+    faction = models.ForeignKey(Faction)
 
     class Meta:
         verbose_name = "slot"
         verbose_name_plural = 'sloty'
 
     def __str__(self):
-        return '{0} - {1}'.format(self.name, self.event)
+        return '{0} - {1}'.format(self.name, self.faction.event)
 
 
 class Entry(models.Model):
@@ -73,6 +86,7 @@ class Entry(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
                              verbose_name='użytkownik')
     slot = models.OneToOneField(Slot, blank=True, null=True)
+    faction = models.ForeignKey(Faction, blank=True, null=True)
 
     class Meta:
         verbose_name = 'zapis'
