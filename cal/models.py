@@ -15,6 +15,10 @@ class Event(models.Model):
                                verbose_name='zdjecie')
     datetime = models.DateTimeField(default=timezone.now(),
                                     verbose_name='data i czas')
+    starttime1 = models.TimeField(verbose_name='rozgrywki1')
+    starttime2 = models.TimeField(verbose_name='rozgrywki2')
+    endtime1 = models.TimeField(verbose_name='koniec1')
+    endtime2 = models.TimeField(verbose_name='koniec2')
     location = PlainLocationField(zoom=14, default='53.43,14.56')
     location_video = models.URLField(verbose_name='miejsce zbiorki (video)',
                                      blank=True, null=True)
