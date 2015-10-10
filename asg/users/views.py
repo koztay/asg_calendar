@@ -8,6 +8,9 @@ from braces.views import LoginRequiredMixin
 
 from .models import User
 
+from rest_framework import viewsets
+from .serializers import UserSerializer
+
 
 class UserDetailView(LoginRequiredMixin, DetailView):
     model = User
@@ -46,3 +49,11 @@ class UserListView(LoginRequiredMixin, ListView):
     # These next two lines tell the view to index lookups by username
     slug_field = "username"
     slug_url_kwarg = "username"
+
+
+class UserViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint for users
+    """
+    queryset = User.objects.all()
+    serializer_class = UserSerializer

@@ -8,14 +8,16 @@ from django.contrib import admin
 from django.views.generic import TemplateView
 from rest_framework import routers
 from cal import views
+from asg.users import views as uviews
 
 
 router = routers.DefaultRouter()
 router.register(r'events', views.EventViewSet)
 router.register(r'pgroups', views.PGroupViewSet)
 router.register(r'factions', views.FactionViewSet)
-router.register(r'slots', views.FactionViewSet)
+router.register(r'slots', views.SlotViewSet)
 router.register(r'entries', views.EntryViewSet)
+router.register(r'users', uviews.UserViewSet)
 
 urlpatterns = [
     url(r'^$', TemplateView.as_view(template_name='pages/home.html'), name="home"),

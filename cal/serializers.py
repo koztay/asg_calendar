@@ -30,7 +30,7 @@ class FactionSerializer(serializers.HyperlinkedModelSerializer):
 class SlotSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Slot
-        fields = ('name')
+        fields = ('name', )
 
 
 class EntrySerializer(serializers.HyperlinkedModelSerializer):
