@@ -3,6 +3,7 @@ from cal.models import Event, PGroup, Faction, Slot, Entry
 
 
 class EventSerializer(serializers.HyperlinkedModelSerializer):
+
     class Meta:
         model = Event
         fields = ('title', 'description', 'created_by', 'poster', 'datetime',
