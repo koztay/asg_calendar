@@ -13,7 +13,7 @@ class Event(models.Model):
                                    blank=True, verbose_name='stworzone przez')
     poster = models.ImageField(upload_to='posters', blank=True, null=True,
                                verbose_name='zdjecie')
-    datetime = models.DateTimeField(default=timezone.now(),
+    datetime = models.DateTimeField(default=timezone.now,
                                     verbose_name='data i czas')
     starttime1 = models.TimeField(verbose_name='rozgrywki1')
     starttime2 = models.TimeField(verbose_name='rozgrywki2')
