@@ -281,7 +281,11 @@ LOGGING = {
 REST_FRAMEWORK = {
     # 'DEFAULT_PERMISSION_CLASSES': ('rest_framework.permissions.IsAdminUser',),
     'DEFAULT_PERMISSION_CLASSES': ('rest_framework.permissions.IsAuthenticatedOrReadOnly',),
-    'PAGE_SIZE': 10
+    'PAGE_SIZE': 10,
+    # 'DATETIME_FORMAT': "%d-%m-%Y %H:%M",
+    # 'DATETIME_INPUT_FORMAT': ['%d-%m-%Y %H:%M'],
+    # 'TIME_FORMAT': "%H:%M",
+    # 'TIME_INPUT_FORMAT': ['%H-%M'],
 }
 
 # DJANGO GUARDIAN SETTING

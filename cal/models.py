@@ -9,7 +9,7 @@ from location_field.models.plain import PlainLocationField
 class Event(models.Model):
     title = models.CharField(max_length=255, verbose_name='tytuł')
     description = models.TextField(verbose_name='opis', null=True, blank=True)
-    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, null=True,
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, null=True,
                                    blank=True, verbose_name='stworzone przez')
     poster = models.ImageField(upload_to='posters', blank=True, null=True,
                                verbose_name='zdjecie')

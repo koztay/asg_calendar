@@ -3,6 +3,7 @@ from cal.models import Event, PGroup, Faction, Slot, Entry
 from cal.serializers import EventSerializer, FactionSerializer, SlotSerializer
 from cal.serializers import PGroupSerializer, EntrySerializer
 from rest_framework import viewsets
+from cal.permissions import IsOwnerOrReadOnly
 
 
 class EventViewSet(viewsets.ModelViewSet):
@@ -11,6 +12,11 @@ class EventViewSet(viewsets.ModelViewSet):
     """
     queryset = Event.objects.all().order_by('datetime')
     serializer_class = EventSerializer
+
+    def update(self, request, *args, **kwargs):
+        self.methods = ('put', )
+        self.permission_classes = (IsOwnerOrReadOnly, )
+        return super(self.__class__, self).update(request, *args, **kwargs)
 
 
 class PGroupViewSet(viewsets.ModelViewSet):
