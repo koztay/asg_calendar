@@ -8,8 +8,10 @@ from braces.views import LoginRequiredMixin
 
 from .models import User
 
-from rest_framework import viewsets
+from rest_framework import viewsets, mixins
 from .serializers import UserSerializer
+# from .permissions import IsUser
+# from rest_framework.permissions import IsAdminUser, IsAuthenticated
 
 
 class UserDetailView(LoginRequiredMixin, DetailView):
@@ -23,6 +25,7 @@ class UserRedirectView(LoginRequiredMixin, RedirectView):
     permanent = False
 
     def get_redirect_url(self):
+
         return reverse("users:detail",
                        kwargs={"username": self.request.user.username})
 
@@ -51,9 +54,22 @@ class UserListView(LoginRequiredMixin, ListView):
     slug_url_kwarg = "username"
 
 
-class UserViewSet(viewsets.ModelViewSet):
+# class UserViewSet(viewsets.ModelViewSet):
+class UserViewSet(mixins.RetrieveModelMixin,
+                  mixins.ListModelMixin,
+                  viewsets.GenericViewSet):
     """
     API endpoint for users
     """
     queryset = User.objects.all()
     serializer_class = UserSerializer
+
+    # def update(self, request, *args, **kwargs):
+    #     self.methods = ('put', )
+    #     self.permission_classes = (IsUser, )
+    #     return super(self.__class__, self).update(request, *args, **kwargs)
+
+    # def create(self, request, *args, **kwargs):
+    #     self.methods = ('post', )
+    #     self.permission_classes = (IsAdminUser, )
+    #     return super(self.__class__, self).update(request, *args, **kwargs)
