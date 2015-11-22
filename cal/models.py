@@ -10,7 +10,7 @@ class Event(models.Model):
     title = models.CharField(max_length=255, verbose_name='tytuł')
     description = models.TextField(verbose_name='opis', null=True, blank=True)
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, null=True,
-                                   blank=True, verbose_name='stworzone przez')
+                              blank=True, verbose_name='stworzone przez')
     poster = models.ImageField(upload_to='posters', blank=True, null=True,
                                verbose_name='zdjecie')
     datetime = models.DateTimeField(default=timezone.now,
