@@ -1,1 +1,18 @@
 {% extends "base.html" %}
+{% load staticfiles %}
+{% block content %}
+<div ng-controller="ListCtrl" ng-init="getEvents()">
+	<ul>
+	{% verbatim %}
+		<li ng-repeat="item in events">
+			{{ item.title }} - {{ item.description }}
+		</li>
+	{% endverbatim %}
+	</ul>
+	{% verbatim %}
+	<pre>
+		{{ items | json }}
+	</pre>
+	{% endverbatim %}
+</div>
+{% endblock content %}
