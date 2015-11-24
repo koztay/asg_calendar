@@ -1,18 +1,34 @@
 {% extends "base.html" %}
 {% load staticfiles %}
 {% block content %}
+{% verbatim %}
+
 <div ng-controller="ListCtrl" ng-init="getEvents()">
-	<ul>
-	{% verbatim %}
-		<li ng-repeat="item in events">
-			{{ item.title }} - {{ item.description }}
-		</li>
-	{% endverbatim %}
-	</ul>
-	{% verbatim %}
-	<pre>
-		{{ items | json }}
-	</pre>
-	{% endverbatim %}
+  <div class="card-columns">
+    <div class="card" ng-repeat="item in events">
+      <img class="card-img-top img-thumbnail" src="{{ item.poster }}" alt="Card image cap">
+      <div class="card-block">
+        <h4 class="card-title">{{ item.title }}</h4>
+        <p class="card-text" ng-init="limit = 200;">{{ item.description | limitTo: limit }}{{ item.description.length > limit ? '...' : '' }}</p>
+        <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+      </div>
+    </div>
+  </div>
 </div>
+
+{% endverbatim %}
 {% endblock content %}
+
+
+<div ng-controller="ListCtrl" ng-init="getEvents()" class="card-deck-wrapper">
+	<div ng-repeat="item in events" class="card-deck">
+		<div class="card">
+			<img class="card-img-top img-responsive" src="{{ item.poster }}" alt="Card image cap" >
+			<div class="card-block">
+				<h4 class="card-title">{{ item.title }}</h4>
+				<p class="card-text">{{ item.description }}</p>
+				<a href="#" class="btn btn-primary">Button</a>
+			</div>
+		</div>
+	</div>
+</div>
