@@ -2,7 +2,13 @@
 {% load staticfiles %}
 {% block content %}
 {% verbatim %}
+<div class="col-xs-8 col-xs-offset-2">
+          <div ui-view></div> <!-- This is where our views will load -->
+        </div>
 
+{% endverbatim %}
+{% endblock content %}
+{% verbatim %}
 <div ng-controller="ListCtrl" ng-init="getEvents()">
   <div class="card-columns">
     <div class="card" ng-repeat="item in events">
@@ -15,20 +21,4 @@
     </div>
   </div>
 </div>
-
 {% endverbatim %}
-{% endblock content %}
-
-
-<div ng-controller="ListCtrl" ng-init="getEvents()" class="card-deck-wrapper">
-	<div ng-repeat="item in events" class="card-deck">
-		<div class="card">
-			<img class="card-img-top img-responsive" src="{{ item.poster }}" alt="Card image cap" >
-			<div class="card-block">
-				<h4 class="card-title">{{ item.title }}</h4>
-				<p class="card-text">{{ item.description }}</p>
-				<a href="#" class="btn btn-primary">Button</a>
-			</div>
-		</div>
-	</div>
-</div>
