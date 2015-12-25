@@ -70,3 +70,4 @@ tests/.coverage
 build/
 tests/report/
 asg/media
+.ropeproject/
