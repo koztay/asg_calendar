@@ -4,8 +4,11 @@ from cal.serializers import EventSerializer, FactionSerializer, SlotSerializer
 from cal.serializers import PGroupSerializer, EntrySerializer
 from rest_framework import viewsets
 from cal.permissions import IsOwnerOrReadOnly
+from django.views.generic import ListView, DetailView
+from django.utils import timezone
 
 
+# API Views
 class EventViewSet(viewsets.ModelViewSet):
     """
     API endpoint for events
@@ -49,3 +52,13 @@ class EntryViewSet(viewsets.ModelViewSet):
     """
     queryset = Entry.objects.all().order_by('event', 'faction')
     serializer_class = EntrySerializer
+
+
+class EventListView(ListView):
+    queryset = Event.objects.filter(datetime__gte=timezone.now())
+    context_object_name = 'events'
+
+
+class EventDetailView(DetailView):
+    model = Event
+    context_object_name = 'event'

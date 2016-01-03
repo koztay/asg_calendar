@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block title %}Lista wydarzeń{% endblock %}
+{% block content %}
+<p>Events:</p>
+<ul>
+{% for event in events %}
+    <li><a href="{% url 'cal:event-detail' event.pk %}">{{event.title}}</a></li>
+{% endfor %}
+</ul>
+{% endblock %}
+

@@ -1,9 +1,8 @@
-from django.db import models
-# from datetime import datetime
+# Create your models here.
 from django.conf import settings
+from django.db import models
 from django.utils import timezone
 from location_field.models.plain import PlainLocationField
-# Create your models here.
 
 
 class Event(models.Model):

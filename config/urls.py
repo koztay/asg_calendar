@@ -32,6 +32,7 @@ urlpatterns = [
 
     # Your stuff: custom urls includes go here
     url(r'^api/', include(router.urls)),
+    url(r'^', include('cal.urls', namespace='cal')),
 
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
