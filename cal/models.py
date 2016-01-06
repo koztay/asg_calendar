@@ -3,9 +3,10 @@ from django.conf import settings
 from django.db import models
 from django.utils import timezone
 from location_field.models.plain import PlainLocationField
+from django_extensions.db.models import TimeStampedModel
 
 
-class Event(models.Model):
+class Event(TimeStampedModel):
     title = models.CharField(max_length=255, verbose_name='tytuł')
     description = models.TextField(verbose_name='opis', null=True, blank=True)
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, null=True,
@@ -43,7 +44,7 @@ class Event(models.Model):
         return self.title
 
 
-class PGroup(models.Model):
+class PGroup(TimeStampedModel):
     name = models.CharField(max_length=255, verbose_name='nazwa')
     logo = models.ImageField(upload_to='logos', blank=True, null=True)
     website = models.URLField(null=True, blank=True, verbose_name='strona www')
@@ -57,7 +58,7 @@ class PGroup(models.Model):
         return self.name
 
 
-class Faction(models.Model):
+class Faction(TimeStampedModel):
     event = models.ForeignKey(Event)
     name = models.CharField(max_length=255)
 
@@ -69,7 +70,7 @@ class Faction(models.Model):
         return '{0} - {1}'.format(self.event, self.name)
 
 
-class Slot(models.Model):
+class Slot(TimeStampedModel):
     name = models.CharField(max_length=200, verbose_name='nazwa',
                             blank=False, null=False)
     # event = models.ForeignKey(Event)
@@ -83,7 +84,7 @@ class Slot(models.Model):
         return '{0} - {1}'.format(self.name, self.faction.event)
 
 
-class Entry(models.Model):
+class Entry(TimeStampedModel):
     event = models.ForeignKey(Event, blank=False, null=False,
                               verbose_name='wydarzenie')
     user = models.ForeignKey(settings.AUTH_USER_MODEL,

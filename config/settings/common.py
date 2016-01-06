@@ -42,6 +42,7 @@ THIRD_PARTY_APPS = (
     'rest_framework',
     'location_field',
     'guardian',
+    'django_extensions'
 )
 
 # Apps specific for this project go here.
