@@ -54,6 +54,9 @@ class EntryViewSet(viewsets.ModelViewSet):
     serializer_class = EntrySerializer
 
 
+#
+# ---- Generic Django Views
+#
 class EventListView(ListView):
     queryset = Event.objects.filter(datetime__gte=timezone.now())
     context_object_name = 'events'

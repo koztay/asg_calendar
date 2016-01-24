@@ -33,6 +33,7 @@ urlpatterns = [
     # Your stuff: custom urls includes go here
     url(r'^api/', include(router.urls)),
     url(r'^', include('cal.urls', namespace='cal')),
+    url(r'^nested_admin/', include('nested_admin.urls')),
 
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

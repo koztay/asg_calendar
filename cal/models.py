@@ -69,6 +69,9 @@ class Faction(TimeStampedModel):
     def __str__(self):
         return '{0} - {1}'.format(self.event, self.name)
 
+    def get_non_slot_players(self):
+        return self.entry_set.filter(slot=None)
+
 
 class Slot(TimeStampedModel):
     name = models.CharField(max_length=200, verbose_name='nazwa',
@@ -85,8 +88,6 @@ class Slot(TimeStampedModel):
 
 
 class Entry(TimeStampedModel):
-    event = models.ForeignKey(Event, blank=False, null=False,
-                              verbose_name='wydarzenie')
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
                              verbose_name='użytkownik')
     slot = models.OneToOneField(Slot, blank=True, null=True)
@@ -98,4 +99,4 @@ class Entry(TimeStampedModel):
         ordering = ['pk']
 
     def __str__(self):
-        return "{0} - {1} | {2}".format(self.user, self.slot, self.event)
+        return "{0} - {1}".format(self.user, self.slot)

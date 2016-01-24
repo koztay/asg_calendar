@@ -42,7 +42,8 @@ THIRD_PARTY_APPS = (
     'rest_framework',
     'location_field',
     'guardian',
-    'django_extensions'
+    'django_extensions',
+    'nested_admin',
 )
 
 # Apps specific for this project go here.
