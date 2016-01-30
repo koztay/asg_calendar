@@ -91,7 +91,7 @@ class Entry(TimeStampedModel):
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
                              verbose_name='użytkownik')
     slot = models.OneToOneField(Slot, blank=True, null=True)
-    faction = models.ForeignKey(Faction, blank=True, null=True)
+    faction = models.ForeignKey(Faction, blank=False, null=False)
 
     class Meta:
         verbose_name = 'zapis'

@@ -15,7 +15,10 @@
     {% for faction in event.faction_set.all %}
         <div class="card">
             <div class="card-header">
-                {{ faction.name | upper }}
+                <span>{{ faction.name | upper }}</span> 
+                <span class="pull-md-right">
+                    <a class="btn btn-primary btn-sm" id="{{faction.name}}">+</a>
+                </span>
             </div>
             <ul class="list-group list-group-flush">
                 {% for slot in faction.slot_set.all %}
@@ -25,7 +28,7 @@
                 {% endfor %}
                 {% for entry in faction.get_non_slot_players %}
                     <li class="list-group-item">
-                        <span class="pull-xs-right">{{ entry.user }}</span>
+                        <span>None:</span> <span class="pull-xs-right">{{ entry.user }}</span>
                     </li>
                 {% endfor %}
             </ul>

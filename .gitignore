@@ -71,3 +71,5 @@ build/
 tests/report/
 asg/media
 .ropeproject/
+.ctags
+tags

@@ -4,8 +4,10 @@ from cal.serializers import EventSerializer, FactionSerializer, SlotSerializer
 from cal.serializers import PGroupSerializer, EntrySerializer
 from rest_framework import viewsets
 from cal.permissions import IsOwnerOrReadOnly
-from django.views.generic import ListView, DetailView
+from django.views.generic import ListView, DetailView, FormView
 from django.utils import timezone
+# from django.core.urlresolvers import reverse
+from cal.forms import EntryForm
 
 
 # API Views
@@ -65,3 +67,11 @@ class EventListView(ListView):
 class EventDetailView(DetailView):
     model = Event
     context_object_name = 'event'
+
+
+class EntryCreateView(FormView):
+    template_name = 'cal/entry_form.html'
+    form_class = EntryForm
+
+    def form_valid(self, form):
+        pass
