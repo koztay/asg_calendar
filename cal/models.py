@@ -5,10 +5,9 @@ from django.utils import timezone
 from location_field.models.plain import PlainLocationField
 from django_extensions.db.models import TimeStampedModel
 
-
 class Event(TimeStampedModel):
     title = models.CharField(max_length=255, verbose_name='tytuł')
-    description = models.TextField(verbose_name='opis', null=True, blank=True)
+    description = models.TextField(verbose_name='opis', blank=True)
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, null=True,
                               blank=True, verbose_name='stworzone przez')
     poster = models.ImageField(upload_to='posters', blank=True, null=True,
@@ -23,18 +22,19 @@ class Event(TimeStampedModel):
     location_video = models.URLField(verbose_name='miejsce zbiorki (video)',
                                      blank=True, null=True)
     areamap = models.FileField(verbose_name='mapa', null=True, blank=True)
-    fps = models.TextField(verbose_name='fps', null=True, blank=True)
-    ammo = models.TextField(verbose_name='amunicja', null=True, blank=True)
-    terms = models.TextField(verbose_name='regulamin', null=True, blank=True)
-    entry_fee = models.TextField(verbose_name='wpisowe', null=True, blank=True)
+    fps = models.TextField(verbose_name='fps', blank=True)
+    ammo = models.TextField(verbose_name='amunicja', blank=True)
+    terms = models.TextField(verbose_name='regulamin', blank=True)
+    entry_fee = models.TextField(verbose_name='wpisowe', blank=True)
     slot_limit = models.PositiveIntegerField(
         verbose_name='limit miejsc', blank=True, null=True, default=None)
     pyro = models.BooleanField(verbose_name='pirotechnika', default=False)
     underage = models.BooleanField(verbose_name='nieletni', default=False)
-    rules = models.TextField(verbose_name='zasady gry', null=True, blank=True)
+    rules = models.TextField(verbose_name='zasady gry', blank=True)
     info = models.TextField(verbose_name='wiecej informacji',
-                            null=True, blank=True)
-    link = models.URLField(null=True, blank=True)
+                            blank=True)
+    link = models.URLField(blank=True)
+    is_open = models.BooleanField(default=True, verbose_name='otwarte')
 
     class Meta:
         verbose_name = 'wydarzenie'
@@ -42,6 +42,27 @@ class Event(TimeStampedModel):
 
     def __str__(self):
         return self.title
+
+    @property
+    def signed_up_users(self):
+        users = []
+        for faction in self.factions.all():
+            users.extend(faction.users.all())
+        return users
+
+    def user_can_sign_up(self, user):
+        try:
+            slot_limit_exceeded = len(self.signed_up_users) > self.slot_limit
+        except TypeError:
+            slot_limit_exceeded = False
+        if user not in self.signed_up_users and self.is_open and not slot_limit_exceeded:
+            return True
+        return False
+
+    # def attrs(self):
+    #     # for attr, value in self._meta.get_fields():
+    #     for attr, value in self.__dict__.iteritems():
+    #         yield attr, value
 
 
 class PGroup(TimeStampedModel):
@@ -59,8 +80,10 @@ class PGroup(TimeStampedModel):
 
 
 class Faction(TimeStampedModel):
-    event = models.ForeignKey(Event)
+    event = models.ForeignKey(Event, related_name='factions')
     name = models.CharField(max_length=255)
+    users = models.ManyToManyField(settings.AUTH_USER_MODEL, through='cal.Entry',
+                                  related_name='factions', verbose_name='użytkownicy')
 
     class Meta:
         verbose_name = 'frakcja'
@@ -70,7 +93,7 @@ class Faction(TimeStampedModel):
         return '{0} - {1}'.format(self.event, self.name)
 
     def get_non_slot_players(self):
-        return self.entry_set.filter(slot=None)
+        return self.entries.filter(slot=None)
 
 
 class Slot(TimeStampedModel):
@@ -88,10 +111,10 @@ class Slot(TimeStampedModel):
 
 
 class Entry(TimeStampedModel):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL,
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='entries',
                              verbose_name='użytkownik')
     slot = models.OneToOneField(Slot, blank=True, null=True)
-    faction = models.ForeignKey(Faction, blank=False, null=False)
+    faction = models.ForeignKey(Faction, related_name='entries', blank=False, null=False)
 
     class Meta:
         verbose_name = 'zapis'

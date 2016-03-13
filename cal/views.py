@@ -4,10 +4,9 @@ from cal.serializers import EventSerializer, FactionSerializer, SlotSerializer
 from cal.serializers import PGroupSerializer, EntrySerializer
 from rest_framework import viewsets
 from cal.permissions import IsOwnerOrReadOnly
-from django.views.generic import ListView, DetailView, FormView
+from django.views.generic import ListView, DetailView, CreateView
 from django.utils import timezone
-# from django.core.urlresolvers import reverse
-from cal.forms import EntryForm
+from django.core.urlresolvers import reverse
 
 
 # API Views
@@ -68,10 +67,32 @@ class EventDetailView(DetailView):
     model = Event
     context_object_name = 'event'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['user_can_signup'] = self.object.user_can_sign_up(self.request.user)
+        return context
 
-class EntryCreateView(FormView):
-    template_name = 'cal/entry_form.html'
-    form_class = EntryForm
+    # def attrs(self):
+    #     # for attr, value in self._meta.get_fields():
+    #     for attr, value in self.__dict__.iteritems():
+    #         yield attr, value
+
+
+class EntryCreateView(CreateView):
+    model = Entry
+    fields = []
+
+    def get_success_url(self):
+        return reverse('cal:event-detail', kwargs={'pk': self.kwargs.get('pk')})
 
     def form_valid(self, form):
-        pass
+        form.instance.user = self.request.user
+        faction_id = self.kwargs.get('faction_id')
+        slot_id = self.kwargs.get('slot_id')
+        if faction_id:
+            form.instance.faction = Faction.objects.get(id=faction_id)
+        if slot_id:
+            slot = Slot.objects.get(id=slot_id)
+            form.instance.slot = slot
+            form.instance.faction = Faction.objects.get(id=slot.faction.id)
+        return super(EntryCreateView, self).form_valid(form)

@@ -3,27 +3,46 @@
     {{ event.title}}
 {% endblock %}
 {% block content %}
-<h1>{{ event.title }}</h1>
-<ul>
-    <li>{{ event.datetime }}</li>
-    <li>Description: 
-        <p>{{ event.description}}</p>
-    </li>
-    <li>{{ event.location }}</li>
-</ul>
+<div class="card">
+    <ul class="list-group list-group-flush">
+{#        {% for attribute, value in event.attrs %}#}
+{#        <li class="list-group-item">{{ attribute }}:{{ value }}</li>#}
+{#        {% endfor %}#}
+    </ul>
+</div>
+<div class="card">
+    <h1 class="card-header">{{ event.title }}</h1>
+    <ul>
+        <li>{{ event.datetime }}</li>
+        <li>Description:
+            <p>{{ event.description}}</p>
+        </li>
+        <li>{{ event.location }}</li>
+    </ul>
+</div>
 <div class="card-columns">
-    {% for faction in event.faction_set.all %}
+    {% for faction in event.factions.all %}
         <div class="card">
             <div class="card-header">
-                <span>{{ faction.name | upper }}</span> 
+                <span>{{ faction.name | upper }}</span>
                 <span class="pull-md-right">
-                    <a class="btn btn-primary btn-sm" id="{{faction.name}}">+</a>
+                {% if request.user not in event.signed_up_users %}
+                    <a href="{% url 'cal:entry_create' event.pk faction.pk %}"
+                       class="btn btn-primary btn-sm" id="{{faction.name}}">+</a>
+                {% endif %}
                 </span>
             </div>
             <ul class="list-group list-group-flush">
                 {% for slot in faction.slot_set.all %}
                     <li class="list-group-item">
-                        {{ slot.name }}: <span class="pull-xs-right">{{ slot.entry.user }}</span>
+                        {{ slot.name }}:
+                        <span class="pull-xs-right">
+                            {% if slot.entry.user %}
+                                {{ slot.entry.user }}
+                            {% elif user_can_signup %}
+                                <a href="{% url 'cal:entry_create_slot' event.pk slot.pk %}">ZAPISZ SIĘ</a>
+                            {% endif %}
+                        </span>
                     </li>
                 {% endfor %}
                 {% for entry in faction.get_non_slot_players %}
