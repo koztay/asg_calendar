@@ -1,4 +1,8 @@
 # from django.shortcuts import render, render_to_response
+from braces.views import LoginRequiredMixin
+from django.views.generic.edit import DeleteView
+from django.conf import settings
+
 from cal.models import Event, PGroup, Faction, Slot, Entry
 from cal.serializers import EventSerializer, FactionSerializer, SlotSerializer
 from cal.serializers import PGroupSerializer, EntrySerializer
@@ -78,9 +82,10 @@ class EventDetailView(DetailView):
     #         yield attr, value
 
 
-class EntryCreateView(CreateView):
+class EntryCreateView(LoginRequiredMixin, CreateView):
     model = Entry
     fields = []
+    login_url = settings.LOGIN_REDIRECT_URL
 
     def get_success_url(self):
         return reverse('cal:event-detail', kwargs={'pk': self.kwargs.get('pk')})
@@ -96,3 +101,8 @@ class EntryCreateView(CreateView):
             form.instance.slot = slot
             form.instance.faction = Faction.objects.get(id=slot.faction.id)
         return super(EntryCreateView, self).form_valid(form)
+
+
+class EntryDeleteView(LoginRequiredMixin, DeleteView):
+    model = Entry
+    login_url = settings.LOGIN_REDIRECT_URL

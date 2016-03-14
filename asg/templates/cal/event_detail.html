@@ -26,7 +26,7 @@
             <div class="card-header">
                 <span>{{ faction.name | upper }}</span>
                 <span class="pull-md-right">
-                {% if request.user not in event.signed_up_users %}
+                {% if user_can_signup %}
                     <a href="{% url 'cal:entry_create' event.pk faction.pk %}"
                        class="btn btn-primary btn-sm" id="{{faction.name}}">+</a>
                 {% endif %}

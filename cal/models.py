@@ -5,6 +5,7 @@ from django.utils import timezone
 from location_field.models.plain import PlainLocationField
 from django_extensions.db.models import TimeStampedModel
 
+
 class Event(TimeStampedModel):
     title = models.CharField(max_length=255, verbose_name='tytuł')
     description = models.TextField(verbose_name='opis', blank=True)
@@ -51,8 +52,10 @@ class Event(TimeStampedModel):
         return users
 
     def user_can_sign_up(self, user):
+        if user.is_anonymous():
+            return False
         try:
-            slot_limit_exceeded = len(self.signed_up_users) > self.slot_limit
+            slot_limit_exceeded = len(self.signed_up_users) >= self.slot_limit
         except TypeError:
             slot_limit_exceeded = False
         if user not in self.signed_up_users and self.is_open and not slot_limit_exceeded:
