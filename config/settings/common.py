@@ -44,13 +44,30 @@ THIRD_PARTY_APPS = (
     'guardian',
     'django_extensions',
     'nested_admin',
+    'wagtail.wagtailforms',
+    'wagtail.wagtailredirects',
+    'wagtail.wagtailembeds',
+    'wagtail.wagtailsites',
+    'wagtail.wagtailusers',
+    'wagtail.wagtailsnippets',
+    'wagtail.wagtaildocs',
+    'wagtail.wagtailimages',
+    'wagtail.wagtailsearch',
+    'wagtail.wagtailadmin',
+    'wagtail.wagtailcore',
+
+    'modelcluster',
+    'compressor',
+    'taggit',
+
 )
 
 # Apps specific for this project go here.
 LOCAL_APPS = (
     'asg.users',  # custom users app
     # Your stuff: custom apps go here
-    'cal'
+    'cal',
+    'cms',
 )
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
@@ -66,6 +83,8 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'wagtail.wagtailcore.middleware.SiteMiddleware',
+    'wagtail.wagtailredirects.middleware.RedirectMiddleware',
 )
 
 # MIGRATIONS CONFIGURATION
@@ -292,3 +311,7 @@ REST_FRAMEWORK = {
 
 # DJANGO GUARDIAN SETTING
 ANONYMOUS_USER_ID = -1
+
+# WAGTAIL SETTINGS
+WAGTAIL_SITE_NAME = 'My Example Site'
+

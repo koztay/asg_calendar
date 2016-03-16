@@ -9,6 +9,9 @@ from django.views.generic import TemplateView
 from rest_framework import routers
 from cal import views
 from asg.users import views as uviews
+from wagtail.wagtailadmin import urls as wagtailadmin_urls
+from wagtail.wagtaildocs import urls as wagtaildocs_urls
+from wagtail.wagtailcore import urls as wagtail_urls
 
 
 router = routers.DefaultRouter()
@@ -18,6 +21,8 @@ router.register(r'factions', views.FactionViewSet)
 router.register(r'slots', views.SlotViewSet)
 router.register(r'entries', views.EntryViewSet)
 router.register(r'users', uviews.UserViewSet)
+
+
 
 urlpatterns = [
     url(r'^$', TemplateView.as_view(template_name='pages/home.html'), name="home"),
@@ -47,3 +52,9 @@ if settings.DEBUG:
         url(r'^404/$', 'django.views.defaults.page_not_found'),
         url(r'^500/$', 'django.views.defaults.server_error'),
     ]
+
+urlpatterns += [
+    url(r'^cms/', include(wagtailadmin_urls)),
+    url(r'^documents/', include(wagtaildocs_urls)),
+    url(r'^pages/', include(wagtail_urls)),
+]
