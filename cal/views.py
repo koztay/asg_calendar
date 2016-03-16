@@ -1,5 +1,6 @@
 # from django.shortcuts import render, render_to_response
-from braces.views import LoginRequiredMixin
+from braces.views import LoginRequiredMixin, UserPassesTestMixin
+from django.shortcuts import redirect
 from django.views.generic.edit import DeleteView
 from django.conf import settings
 
@@ -10,7 +11,7 @@ from rest_framework import viewsets
 from cal.permissions import IsOwnerOrReadOnly
 from django.views.generic import ListView, DetailView, CreateView
 from django.utils import timezone
-from django.core.urlresolvers import reverse
+from django.core.urlresolvers import reverse, reverse_lazy
 
 
 # API Views
@@ -55,7 +56,7 @@ class EntryViewSet(viewsets.ModelViewSet):
     """
     API endpoint for entries
     """
-    queryset = Entry.objects.all().order_by('event', 'faction')
+    queryset = Entry.objects.all().order_by('faction', 'slot')
     serializer_class = EntrySerializer
 
 
@@ -103,11 +104,15 @@ class EntryCreateView(LoginRequiredMixin, CreateView):
         return super(EntryCreateView, self).form_valid(form)
 
 
-class EntryDeleteView(LoginRequiredMixin, DeleteView):
+class EntryDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Entry
     login_url = settings.LOGIN_REDIRECT_URL
 
     def get_success_url(self):
         return reverse('cal:event-detail', kwargs={'pk': self.object.faction.event.pk})
 
+    def test_func(self, user):
+        return self.get_object().user == user
 
+    def no_permissions_fail(self, request=None):
+        return redirect(reverse_lazy('cal:event-details', kwargs={'pk': self.get_object().faction.event.pk}))

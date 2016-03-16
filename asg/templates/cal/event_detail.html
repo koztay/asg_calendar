@@ -42,9 +42,8 @@
                                 {{ slot.entry.user }}
                                 {% compare_users slot.entry.user request.user as is_request_user %}
                                 {% if is_request_user %}
-
                                     <a href="{% url 'cal:entry-delete' slot.entry.pk %}">
-                                        WYPISZ SIE
+                                        [-]
                                     </a>
                                 {% endif %}
                             {% elif user_can_signup %}
@@ -57,7 +56,15 @@
                 {% endfor %}
                 {% for entry in faction.get_non_slot_players %}
                     <li class="list-group-item">
-                        <span>None:</span> <span class="pull-xs-right">{{ entry.user }}</span>
+                        <span>-</span>
+                        <span class="pull-xs-right">{{ entry.user }}
+                            {% compare_users entry.user request.user as is_request_user %}
+                            {% if is_request_user %}
+                                <a href="{% url 'cal:entry-delete' entry.pk %}">
+                                    [-]
+                                </a>
+                            {% endif %}
+                        </span>
                     </li>
                 {% endfor %}
             </ul>

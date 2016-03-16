@@ -24,13 +24,13 @@
     {% endblock %}
 
     {% block angular %}
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0-beta.2/angular.min.js"></script>
+{#    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0-beta.2/angular.min.js"></script>#}
     {% endblock %}
 
   </head>
 
   <body>
-    
+
     {% include 'navbar.html' %}
     <div class="container">
 
@@ -57,18 +57,19 @@
       <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
 
       <!-- Latest compiled and minified JavaScript -->
+      <script src="https://raw.githubusercontent.com/HubSpot/tether/master/dist/js/tether.min.js"></script>
       <script src="https://cdn.rawgit.com/twbs/bootstrap/v4-dev/dist/js/bootstrap.js"></script>
 
       <!-- Your stuff: Third-party javascript libraries go here -->
 
       <!-- place project specific Javascript in this file -->
-      <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0-beta.2/angular-route.min.js"></script>
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.2.15/angular-ui-router.min.js"></script>
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.0-beta.2/angular-resource.min.js"></script>
-      <script src="{% static 'js/app.js' %}"></script>
-      <script src="{% static 'js/services.js' %}"></script>
-      <script src="{% static 'js/controllers.js' %}"></script>
+{#      <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0-beta.2/angular-route.min.js"></script>#}
+{#      <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.2.15/angular-ui-router.min.js"></script>#}
+{#      <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.0-beta.2/angular-resource.min.js"></script>#}
+{#      <script src="{% static 'js/app.js' %}"></script>#}
+{#      <script src="{% static 'js/services.js' %}"></script>#}
+{#      <script src="{% static 'js/controllers.js' %}"></script>#}
     {% endblock javascript %}
   </body>
 </html>
- 
+
