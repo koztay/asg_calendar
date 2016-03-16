@@ -96,7 +96,7 @@ class EntryCreateView(LoginRequiredMixin, CreateView):
         slot_id = self.kwargs.get('slot_id')
         if faction_id:
             form.instance.faction = Faction.objects.get(id=faction_id)
-        if slot_id:
+        elif slot_id:
             slot = Slot.objects.get(id=slot_id)
             form.instance.slot = slot
             form.instance.faction = Faction.objects.get(id=slot.faction.id)
@@ -106,3 +106,8 @@ class EntryCreateView(LoginRequiredMixin, CreateView):
 class EntryDeleteView(LoginRequiredMixin, DeleteView):
     model = Entry
     login_url = settings.LOGIN_REDIRECT_URL
+
+    def get_success_url(self):
+        return reverse('cal:event-detail', kwargs={'pk': self.object.faction.event.pk})
+
+

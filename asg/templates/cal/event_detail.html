@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load cal_tags %}
 {% block title %}
     {{ event.title}}
 {% endblock %}
@@ -27,7 +28,7 @@
                 <span>{{ faction.name | upper }}</span>
                 <span class="pull-md-right">
                 {% if user_can_signup %}
-                    <a href="{% url 'cal:entry_create' event.pk faction.pk %}"
+                    <a href="{% url 'cal:entry-create' event.pk faction.pk %}"
                        class="btn btn-primary btn-sm" id="{{faction.name}}">+</a>
                 {% endif %}
                 </span>
@@ -39,8 +40,17 @@
                         <span class="pull-xs-right">
                             {% if slot.entry.user %}
                                 {{ slot.entry.user }}
+                                {% compare_users slot.entry.user request.user as is_request_user %}
+                                {% if is_request_user %}
+
+                                    <a href="{% url 'cal:entry-delete' slot.entry.pk %}">
+                                        WYPISZ SIE
+                                    </a>
+                                {% endif %}
                             {% elif user_can_signup %}
-                                <a href="{% url 'cal:entry_create_slot' event.pk slot.pk %}">ZAPISZ SIĘ</a>
+                            <a href="{% url 'cal:entry-create-slot' event.pk slot.pk %}">
+                                ZAPISZ SIĘ
+                            </a>
                             {% endif %}
                         </span>
                     </li>
