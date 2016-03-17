@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% load cal_tags %}
+{% load wagtailcore_tags %}
+{% load wagtailuserbar %}
+{% load wagtailimages_tags %}
+
+{% block title %}
+    {{ page.title}}
+{% endblock %}
+{% block content %}
+<div class="card">
+    <ul class="list-group list-group-flush">
+    </ul>
+</div>
+<div class="card">
+    {% image page.poster width-400 %}
+    <h1 class="card-header">{{ page.title }}</h1>
+    <ul>
+        <li>{{ page.datetime }}</li>
+        <li>Description:
+            <p>{{ page.description|richtext }}</p>
+        </li>
+        <li>{{ page.link }}</li>
+    </ul>
+</div>
+{% endblock %}
