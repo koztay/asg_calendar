@@ -86,7 +86,7 @@ class Faction(TimeStampedModel):
     event = models.ForeignKey(Event, related_name='factions')
     name = models.CharField(max_length=255)
     users = models.ManyToManyField(settings.AUTH_USER_MODEL, through='cal.Entry',
-                                  related_name='factions', verbose_name='użytkownicy')
+                                   related_name='factions', verbose_name='użytkownicy')
 
     class Meta:
         verbose_name = 'frakcja'
