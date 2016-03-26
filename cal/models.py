@@ -4,6 +4,14 @@ from django.db import models
 from django.utils import timezone
 from location_field.models.plain import PlainLocationField
 from django_extensions.db.models import TimeStampedModel
+from django.core.exceptions import ValidationError
+
+
+def validate_slot_number(faction):
+    if faction.event.slot_limit_reached:
+        raise ValidationError(
+                'Przekroczono limit miejsc',
+                )
 
 
 class Event(TimeStampedModel):
@@ -51,21 +59,21 @@ class Event(TimeStampedModel):
             users.extend(faction.users.all())
         return users
 
-    def user_can_sign_up(self, user):
-        if user.is_anonymous():
-            return False
+    def slot_limit_reached(self):
         try:
             slot_limit_exceeded = len(self.signed_up_users) >= self.slot_limit
+            print(self.signed_up_users)
+            if slot_limit_exceeded:
+                return True
+            return False
         except TypeError:
-            slot_limit_exceeded = False
-        if user not in self.signed_up_users and self.is_open and not slot_limit_exceeded:
-            return True
-        return False
+            return False
 
-    # def attrs(self):
-    #     # for attr, value in self._meta.get_fields():
-    #     for attr, value in self.__dict__.iteritems():
-    #         yield attr, value
+    # TODO walidacja na poziomie backendu
+    def user_can_sign_up(self, user):
+        if user.is_anonymous() or self.slot_limit_reached() or not self.is_open:
+            return False
+        return True
 
 
 class PGroup(TimeStampedModel):
@@ -113,11 +121,13 @@ class Slot(TimeStampedModel):
         return '{0} - {1}'.format(self.name, self.faction.event)
 
 
+# TODO dokonczyc walidacje, poki co nie dziala
 class Entry(TimeStampedModel):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='entries',
                              verbose_name='użytkownik')
     slot = models.OneToOneField(Slot, blank=True, null=True)
-    faction = models.ForeignKey(Faction, related_name='entries', blank=False, null=False)
+    faction = models.ForeignKey(Faction, related_name='entries', blank=False, null=False,
+                                validators=[validate_slot_number])
 
     class Meta:
         verbose_name = 'zapis'
