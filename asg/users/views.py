@@ -7,6 +7,8 @@ from django.views.generic import DetailView, ListView, RedirectView, UpdateView
 from braces.views import LoginRequiredMixin
 
 from .models import User
+from django.forms.models import modelform_factory
+from django.forms.widgets import DateInput
 
 from rest_framework import viewsets, mixins
 from .serializers import UserSerializer
@@ -32,10 +34,13 @@ class UserRedirectView(LoginRequiredMixin, RedirectView):
 
 class UserUpdateView(LoginRequiredMixin, UpdateView):
 
-    fields = ['first_name', 'last_name', 'phone_number']
+    # fields = ['first_name', 'last_name', 'phone_number', 'date_of_birth', ]
 
     # we already imported User in the view code above, remember?
     model = User
+    form_class = modelform_factory(User,
+                                   widgets={'date_of_birth': DateInput},
+                                   fields=['first_name', 'last_name', 'phone_number', 'date_of_birth'])
 
     # send the user back to their own page after a successful update
     def get_success_url(self):

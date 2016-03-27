@@ -38,7 +38,7 @@ THIRD_PARTY_APPS = (
     'crispy_forms',  # Form layouts
     'allauth',  # registration
     'allauth.account',  # registration
-    'allauth.socialaccount',  # registration
+    # 'allauth.socialaccount',  # registration
     'rest_framework',
     'location_field',
     'guardian',
@@ -314,4 +314,3 @@ ANONYMOUS_USER_ID = -1
 
 # WAGTAIL SETTINGS
 WAGTAIL_SITE_NAME = 'My Example Site'
-
