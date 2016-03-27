@@ -7,11 +7,15 @@ from django_extensions.db.models import TimeStampedModel
 from django.core.exceptions import ValidationError
 
 
-def validate_slot_number(faction):
-    if faction.event.slot_limit_reached:
-        raise ValidationError(
-                'Przekroczono limit miejsc',
-                )
+def validate_slot_number(value):
+    try:
+        faction = Faction.objects.get(id=value)
+        if faction.event.slot_limit_reached():
+            raise ValidationError(
+                    'Przekroczono limit miejsc',
+                    )
+    except:
+        pass
 
 
 class Event(TimeStampedModel):
@@ -62,16 +66,15 @@ class Event(TimeStampedModel):
     def slot_limit_reached(self):
         try:
             slot_limit_exceeded = len(self.signed_up_users) >= self.slot_limit
-            print(self.signed_up_users)
             if slot_limit_exceeded:
                 return True
             return False
         except TypeError:
             return False
 
-    # TODO walidacja na poziomie backendu
     def user_can_sign_up(self, user):
-        if user.is_anonymous() or self.slot_limit_reached() or not self.is_open:
+        if user.is_anonymous() or self.slot_limit_reached() or not self.is_open or \
+                user in self.signed_up_users:
             return False
         return True
 
@@ -121,7 +124,6 @@ class Slot(TimeStampedModel):
         return '{0} - {1}'.format(self.name, self.faction.event)
 
 
-# TODO dokonczyc walidacje, poki co nie dziala
 class Entry(TimeStampedModel):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='entries',
                              verbose_name='użytkownik')

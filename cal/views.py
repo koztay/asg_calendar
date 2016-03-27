@@ -83,13 +83,24 @@ class EventDetailView(DetailView):
     #         yield attr, value
 
 
-class EntryCreateView(LoginRequiredMixin, CreateView):
+class EntryCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     model = Entry
     fields = []
     login_url = settings.LOGIN_REDIRECT_URL
 
     def get_success_url(self):
         return reverse('cal:event-detail', kwargs={'pk': self.kwargs.get('pk')})
+
+    def get_event(self):
+        faction_id = self.kwargs.get('faction_id')
+        slot_id = self.kwargs.get('slot_id')
+        if faction_id:
+            faction = Faction.objects.get(id=faction_id)
+            event = faction.event
+        elif slot_id:
+            slot = Slot.objects.get(id=slot_id)
+            event = slot.faction.event
+        return event
 
     def form_valid(self, form):
         form.instance.user = self.request.user
@@ -103,6 +114,13 @@ class EntryCreateView(LoginRequiredMixin, CreateView):
             form.instance.faction = Faction.objects.get(id=slot.faction.id)
         return super(EntryCreateView, self).form_valid(form)
 
+    def test_func(self, user):
+        event = self.get_event()
+        return event.user_can_sign_up(user)
+
+    def no_permissions_fail(self, request=None):
+        return redirect(reverse_lazy('cal:event-detail', kwargs={'pk': self.get_event().pk}))
+
 
 class EntryDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Entry
@@ -115,4 +133,4 @@ class EntryDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         return self.get_object().user == user
 
     def no_permissions_fail(self, request=None):
-        return redirect(reverse_lazy('cal:event-details', kwargs={'pk': self.get_object().faction.event.pk}))
+        return redirect(reverse_lazy('cal:event-detail', kwargs={'pk': self.get_object().faction.event.pk}))
