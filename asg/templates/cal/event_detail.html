@@ -8,17 +8,25 @@
     <div class="card-header">
         <h1>{{ event.title }}</h1>
     </div>
-    <ul id="event-description" class="list-group list-group-flush">
+    <ul id="accordion" role="tablist" class="list-group list-group-flush">
         <li class="list-group-item">
-            <a data-toggle="collapse" data-parent="#event-description" href="#descriptionCollapse">
+            <a role="tab" data-toggle="collapse" data-parent="#accordion" href="#descriptionCollapse" data-target="#descriptionCollapse">
                 <h4 class="list-group-item-heading">Opis</h4>
             </a>
-            <p id="descriptionCollapse" class="list-group-item-text collapse">
+            <p role="tabpanel" id="descriptionCollapse" class="list-group-item-text collapse in">
                 {{ event.description }}
-                {{ event.datetime }}
             </p>
         </li>
-        <li class="list-group-item">{{ event.location }}</li>
+        <li class="list-group-item">
+            <a role="tab" data-toggle="collapse" data-parent="#accordion" href="#datetimeCollapse" class="collapsed" data-target="#datetimeCollapse">
+                <h4 class="list-group-item-heading">Data i Czas</h4>
+            </a>
+            <div role="tabpanel" id="datetimeCollapse" class="list-group-item-text collapse">
+                <p>Zbiórka: {{ event.datetime }}</p>
+                Początek rozgrywki: {{ event.starttime1 }} - {{ event.starttime2 }}
+                Zakończenie rozgrywki: {{ event.endtime1 }} - {{ event.endtime2 }}
+            </div>
+        </li>
     </ul>
 </div>
 
