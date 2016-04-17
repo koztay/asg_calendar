@@ -121,6 +121,11 @@ class EntryCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     def no_permissions_fail(self, request=None):
         return redirect(reverse_lazy('cal:event-detail', kwargs={'pk': self.get_event().pk}))
 
+    def get_context_data(self, **kwargs): 
+        context = super().get_context_data(**kwargs) 
+        context['action_name'] = 'Zapisz się' 
+        return context 
+
 
 class EntryDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Entry
@@ -135,3 +140,8 @@ class EntryDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
     def no_permissions_fail(self, request=None):
         return redirect(reverse_lazy('cal:event-detail', kwargs={'pk': self.get_object().faction.event.pk}))
+
+    def get_context_data(self, **kwargs): 
+        context = super().get_context_data(**kwargs) 
+        context['action_name'] = 'Wypisz się' 
+        return context 
