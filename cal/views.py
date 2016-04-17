@@ -125,6 +125,7 @@ class EntryCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
 class EntryDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Entry
     login_url = settings.LOGIN_REDIRECT_URL
+    template_name = 'cal/entry_form.html'
 
     def get_success_url(self):
         return reverse('cal:event-detail', kwargs={'pk': self.object.faction.event.pk})
