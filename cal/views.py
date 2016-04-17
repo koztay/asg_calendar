@@ -103,10 +103,16 @@ class EntryCreateView(LoginRequiredMixin, CreateView):
             form.instance.faction = Faction.objects.get(id=slot.faction.id)
         return super(EntryCreateView, self).form_valid(form)
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['action_name'] = 'Zapisz się'
+        return context
+
 
 class EntryDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Entry
     login_url = settings.LOGIN_REDIRECT_URL
+    template_name = 'cal/entry_form.html'
 
     def get_success_url(self):
         return reverse('cal:event-detail', kwargs={'pk': self.object.faction.event.pk})
@@ -116,3 +122,11 @@ class EntryDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
     def no_permissions_fail(self, request=None):
         return redirect(reverse_lazy('cal:event-details', kwargs={'pk': self.get_object().faction.event.pk}))
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['action_name'] = 'Wypisz się'
+        return context
+
+
+

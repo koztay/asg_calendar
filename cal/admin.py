@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import Event, Entry, Slot, Faction, PGroup
-from nested_admin import NestedStackedInline, NestedAdmin
+from nested_admin import NestedStackedInline, NestedModelAdmin
 
 
 class SlotInline(NestedStackedInline):
@@ -14,7 +14,7 @@ class FactionInline(NestedStackedInline):
     inlines = [SlotInline, ]
 
 
-class EventAdmin(NestedAdmin):
+class EventAdmin(NestedModelAdmin):
     model = Event
     inlines = [FactionInline, ]
 
