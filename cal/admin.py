@@ -17,6 +17,7 @@ class FactionInline(NestedStackedInline):
 class EventAdmin(NestedModelAdmin):
     model = Event
     inlines = [FactionInline, ]
+    exclude = ('owner', )
 
 
 admin.site.register(Event, EventAdmin)

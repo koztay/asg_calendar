@@ -69,7 +69,7 @@ tests/coverage_html/
 tests/.coverage
 build/
 tests/report/
-asg/media
+asg/media/
 .ropeproject/
 .ctags
 tags
