@@ -1,4 +1,3 @@
-# from django.shortcuts import render, render_to_response
 from braces.views import LoginRequiredMixin, UserPassesTestMixin
 from django.shortcuts import redirect
 from django.views.generic.edit import DeleteView
@@ -12,6 +11,7 @@ from cal.permissions import IsOwnerOrReadOnly
 from django.views.generic import ListView, DetailView, CreateView
 from django.utils import timezone
 from django.core.urlresolvers import reverse, reverse_lazy
+from pure_pagination.mixins import PaginationMixin
 
 
 # API Views
@@ -63,9 +63,17 @@ class EntryViewSet(viewsets.ModelViewSet):
 #
 # ---- Generic Django Views
 #
-class EventListView(ListView):
+class EventListView(PaginationMixin, ListView):
     queryset = Event.objects.filter(datetime__gte=timezone.now())
     context_object_name = 'events'
+    paginate_by = 5
+
+
+class EventArchiveView(PaginationMixin, ListView):
+    queryset = Event.objects.all()
+    context_object_name = 'events'
+    paginate_by = 5
+    template_name = 'cal/event_list.html'
 
 
 class EventDetailView(DetailView):
@@ -121,10 +129,10 @@ class EntryCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     def no_permissions_fail(self, request=None):
         return redirect(reverse_lazy('cal:event-detail', kwargs={'pk': self.get_event().pk}))
 
-    def get_context_data(self, **kwargs): 
-        context = super().get_context_data(**kwargs) 
-        context['action_name'] = 'Zapisz się' 
-        return context 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['action_name'] = 'Zapisz się'
+        return context
 
 
 class EntryDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
@@ -141,7 +149,7 @@ class EntryDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     def no_permissions_fail(self, request=None):
         return redirect(reverse_lazy('cal:event-detail', kwargs={'pk': self.get_object().faction.event.pk}))
 
-    def get_context_data(self, **kwargs): 
-        context = super().get_context_data(**kwargs) 
-        context['action_name'] = 'Wypisz się' 
-        return context 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['action_name'] = 'Wypisz się'
+        return context

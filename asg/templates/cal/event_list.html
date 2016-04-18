@@ -5,7 +5,11 @@
 <ul>
 {% for event in events %}
     <li><a href="{% url 'cal:event-detail' event.pk %}">{{event.title}}</a></li>
+{% empty %}
+    <h1>Brak wydarzeń spełniających kryteria</h1>
 {% endfor %}
 </ul>
+
+{% include '_pagination.html' %}
 {% endblock %}
 

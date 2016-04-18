@@ -1,4 +1,3 @@
-# Create your models here.
 from django.conf import settings
 from django.db import models
 from django.utils import timezone
@@ -113,7 +112,6 @@ class Faction(TimeStampedModel):
 class Slot(TimeStampedModel):
     name = models.CharField(max_length=200, verbose_name='nazwa',
                             blank=False, null=False)
-    # event = models.ForeignKey(Event)
     faction = models.ForeignKey(Faction)
 
     class Meta:

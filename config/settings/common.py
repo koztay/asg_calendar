@@ -44,6 +44,7 @@ THIRD_PARTY_APPS = (
     'guardian',
     'django_extensions',
     'nested_admin',
+    'pure_pagination',
     'wagtail.wagtailforms',
     'wagtail.wagtailredirects',
     'wagtail.wagtailembeds',
@@ -314,3 +315,11 @@ ANONYMOUS_USER_ID = -1
 
 # WAGTAIL SETTINGS
 WAGTAIL_SITE_NAME = 'My Example Site'
+
+
+PAGINATION_SETTINGS = {
+    'PAGE_RANGE_DISPLAYED': 5,
+    'MARGIN_PAGES_DISPLAYED': 2,
+
+    'SHOW_FIRST_PAGE_WHEN_INVALID': True,
+}
