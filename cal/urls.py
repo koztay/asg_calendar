@@ -3,6 +3,7 @@ from cal.views import EventListView, EventDetailView, EntryCreateView, EntryDele
 
 
 urlpatterns = patterns('',
+                       url(r'^$', EventListView.as_view(), name='event-index'),
                        url(r'^events/$', EventListView.as_view(), name='event-list'),
                        url(r'^events/archive/$', EventArchiveView.as_view(), name='event-archive'),
                        url(r'^events/(?P<pk>\d+)/$', EventDetailView.as_view(), name='event-detail'),
