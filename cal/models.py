@@ -48,6 +48,8 @@ class Event(TimeStampedModel):
     link = models.URLField(blank=True)
     is_open = models.BooleanField(default=True, verbose_name='otwarte')
 
+    rule_fields_names = ['fps', 'ammo', 'terms', 'entry_fee', 'rules', 'info']
+
     class Meta:
         verbose_name = 'wydarzenie'
         verbose_name_plural = 'wydarzenia'
@@ -76,6 +78,10 @@ class Event(TimeStampedModel):
                 user in self.signed_up_users:
             return False
         return True
+
+    def get_rule_fields(self):
+        for field_name in self.rule_fields_names:
+            yield self._meta.get_field_by_name(field_name)[0].verbose_name, getattr(self, field_name)
 
 
 class PGroup(TimeStampedModel):
