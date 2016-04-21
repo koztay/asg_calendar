@@ -14,7 +14,9 @@ from django.core.urlresolvers import reverse, reverse_lazy
 from pure_pagination.mixins import PaginationMixin
 
 
-# API Views
+#
+# ---- API Views
+#
 class EventViewSet(viewsets.ModelViewSet):
     """
     API endpoint for events
@@ -64,7 +66,7 @@ class EntryViewSet(viewsets.ModelViewSet):
 # ---- Generic Django Views
 #
 class EventListView(PaginationMixin, ListView):
-    queryset = Event.objects.filter(datetime__gte=timezone.now())
+    queryset = Event.objects.filter(datetime__gte=timezone.now()).order_by('datetime')
     context_object_name = 'events'
     paginate_by = 5
 
@@ -84,11 +86,6 @@ class EventDetailView(DetailView):
         context = super().get_context_data(**kwargs)
         context['user_can_signup'] = self.object.user_can_sign_up(self.request.user)
         return context
-
-    # def attrs(self):
-    #     # for attr, value in self._meta.get_fields():
-    #     for attr, value in self.__dict__.iteritems():
-    #         yield attr, value
 
 
 class EntryCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
