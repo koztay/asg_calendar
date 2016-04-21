@@ -4,15 +4,16 @@
 <h1>Wydarzenia:</h1>
 <div class="card-columns">
 {% for event in events %}
+<a class="no-style" href="{% url 'cal:event-detail' event.pk %}">
 <div class="card">
   <img class="card-img-top img-fluid center-block" src="{{ event.poster.url }}" alt="Card image cap">
   <div class="card-block">
   <h4 class="card-title">{{ event.title }}</h4>
     <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-        <a href="{% url 'cal:event-detail' event.pk %}">{{event.title}}</a>
+    <!-- <a href="{% url 'cal:event-detail' event.pk %}">{{event.title}}</a> -->
   </div>
 </div>
-    <!-- <li><a href="{% url 'cal:event-detail' event.pk %}">{{event.title}}</a></li> -->
+</a>
 {% empty %}
     <h1>Brak wydarzeń spełniających kryteria</h1>
 {% endfor %}
