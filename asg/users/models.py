@@ -19,7 +19,7 @@ class User(AbstractUser):
     # First Name and Last Name do not cover name patterns
     # around the globe.
     name = models.CharField(_("Name of User"), blank=True, max_length=255)
-    date_of_birth = models.DateField(_("Data uroedzenia"), blank=True, null=True)
+    date_of_birth = models.DateField(_("Data urodzenia"), blank=True, null=True)
 
     def __str__(self):
         return self.username

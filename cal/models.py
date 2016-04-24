@@ -79,9 +79,10 @@ class Event(TimeStampedModel):
             return False
         return True
 
+    # generator iterujacy po liscie nazw pol i zwracajacy pare: nazwa pola, wartosc pola
     def get_rule_fields(self):
         for field_name in self.rule_fields_names:
-            yield self._meta.get_field_by_name(field_name)[0].verbose_name, getattr(self, field_name)
+            yield self._meta.get_field(field_name).verbose_name, getattr(self, field_name)
 
 
 class PGroup(TimeStampedModel):

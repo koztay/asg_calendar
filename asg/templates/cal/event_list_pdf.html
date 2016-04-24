@@ -1,0 +1,57 @@
+<html>
+ <head>
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+    <style>
+      table, tr, td, th  {
+    border-collapse: collapse;
+        border: 1px solid #000;
+      }
+      table {
+        width: 100%;
+      }
+      body {
+        font-size: 14px;
+      }
+    </style>
+ </head>
+ <body>
+    <h1>{{ event|title }}</h1>
+    <div>{{ event.datetime.date }}
+    <h2>Lista uczestników</h2>
+    {% for faction in event.factions.all %}
+        <h3>{{ faction.name }}</h3>
+        <table style="border-width: 1px">
+            <thead>
+                <tr>
+                    <th style="width:2em;">Lp.</th>
+                    <th>Imię i nazwisko</th>
+                    <th>Nick</th>
+                    <th>Nr telefonu</th>
+                    <th>Podpis</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in faction.users.all %}
+                    <tr>
+                        <td>
+                            {{ forloop.counter }}
+                        </td>
+                        <td>
+                            {{ user.first_name }} {{ user.last_name }}
+                        </td>
+                        <td>
+                            {{ user.username }}
+                        </td>
+                        <td>
+                            {{ user.phone_number }}
+                        </td>
+                        <td>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endfor %}
+
+ </body>
+</html>

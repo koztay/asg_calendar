@@ -1,4 +1,4 @@
-from braces.views import LoginRequiredMixin, UserPassesTestMixin
+from braces.views import LoginRequiredMixin, UserPassesTestMixin, SuperuserRequiredMixin
 from django.shortcuts import redirect
 from django.views.generic.edit import DeleteView
 from django.conf import settings
@@ -12,6 +12,9 @@ from django.views.generic import ListView, DetailView, CreateView
 from django.utils import timezone
 from django.core.urlresolvers import reverse, reverse_lazy
 from pure_pagination.mixins import PaginationMixin
+from django.template.loader import get_template
+from django.http import HttpResponse
+from weasyprint import HTML
 
 
 #
@@ -150,3 +153,18 @@ class EntryDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         context = super().get_context_data(**kwargs)
         context['action_name'] = 'Wypisz się'
         return context
+
+
+class EventDetailPDFView(SuperuserRequiredMixin, DetailView):
+    template_name = 'cal/event_list_pdf.html'
+    model = Event
+    context_object_name = 'event'
+
+    def render_to_response(self, context, **response_kwargs):
+        context = self.get_context_data()
+        html_template = get_template(self.template_name)
+        rendered_html = html_template.render(context).encode(encoding="UTF-8")
+        pdf_file = HTML(string=rendered_html).write_pdf()
+        http_response = HttpResponse(pdf_file, content_type='application/pdf')
+        http_response['Content-Disposition'] = 'filename="report.pdf"'
+        return http_response
