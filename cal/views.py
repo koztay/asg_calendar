@@ -71,13 +71,13 @@ class EntryViewSet(viewsets.ModelViewSet):
 class EventListView(PaginationMixin, ListView):
     queryset = Event.objects.filter(datetime__gte=timezone.now()).order_by('datetime')
     context_object_name = 'events'
-    paginate_by = 5
+    paginate_by = 6
 
 
 class EventArchiveView(PaginationMixin, ListView):
     queryset = Event.objects.all()
     context_object_name = 'events'
-    paginate_by = 5
+    paginate_by = 6
     template_name = 'cal/event_list.html'
 
 
