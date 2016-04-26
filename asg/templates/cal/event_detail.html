@@ -22,7 +22,7 @@
 <div class="card">
     <div class="card-header">
         <h1>{{ event.title }}
-        {% if request.user.is_superuser %}
+        {% if request.user.is_staff %}
             <span class="pull-md-right">
                 <a href="{% url 'cal:event-pdf-detail' event.pk %}" class="btn btn-primary">PDF</a>
             </span>

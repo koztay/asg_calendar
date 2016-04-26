@@ -1,4 +1,4 @@
-from braces.views import LoginRequiredMixin, UserPassesTestMixin, SuperuserRequiredMixin
+from braces.views import LoginRequiredMixin, UserPassesTestMixin, StaffuserRequiredMixin
 from django.shortcuts import redirect
 from django.views.generic.edit import DeleteView
 from django.conf import settings
@@ -155,7 +155,7 @@ class EntryDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         return context
 
 
-class EventDetailPDFView(SuperuserRequiredMixin, DetailView):
+class EventDetailPDFView(StaffuserRequiredMixin, DetailView):
     template_name = 'cal/event_list_pdf.html'
     model = Event
     context_object_name = 'event'
