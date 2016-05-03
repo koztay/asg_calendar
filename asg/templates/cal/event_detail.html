@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% load cal_tags %}
 {% load l10n %}
+{% load easy_maps_tags %}
 
 {% block title %}
     {{ event.title}}
@@ -9,136 +10,147 @@
 {% block css %}
     {{block.super}}
     <style>
-        gm-map {
-            display: block;
-            width: 100%;
-            height: 300px;
-        }
+      #map {
+        height: 400px;
+        width: 500px;
+      }
     </style>
 {% endblock %}
 
+{% block angular %}
+    {{ block.super }}
+{% endblock %}
 {% block content %}
-{# jquery ui accordion #}
-<div class="card">
-    <div class="card-header">
-        <h1>{{ event.title }}
-        {% if request.user.is_staff %}
-            <span class="pull-md-right">
-                <a href="{% url 'cal:event-pdf-detail' event.pk %}" class="btn btn-primary">PDF</a>
-            </span>
-        {% endif %}
-        </h1>
-    </div>
-    <ul id="accordion" role="tablist" class="list-group list-group-flush">
-        <li class="list-group-item">
-            <a role="tab" data-toggle="collapse" data-parent="#accordion" href="#descriptionCollapse" data-target="#descriptionCollapse">
-                <h4 class="list-group-item-heading">Opis</h4>
-            </a>
-            <p role="tabpanel" id="descriptionCollapse" class="list-group-item-text collapse in">
-                {{ event.description }}
-            </p>
-        </li>
-        <li class="list-group-item">
-            <a role="tab" data-toggle="collapse" data-parent="#accordion" href="#datetimeCollapse" class="collapsed" data-target="#datetimeCollapse">
-                <h4 class="list-group-item-heading">Data i Czas</h4>
-            </a>
-            <div role="tabpanel" id="datetimeCollapse" class="list-group-item-text collapse">
-                <p>Zbiórka: {{ event.datetime|localize }}</p>
-                <p>Początek rozgrywki: {{ event.starttime1|localize }} - {{ event.starttime2|localize }}</p>
-                <p>Zakończenie rozgrywki: {{ event.endtime1|localize }} - {{ event.endtime2|localize }}</p>
-            </div>
-        </li>
-        <li class="list-group-item">
-            <a role="tab" data-toggle="collapse" data-parent="#accordion" href="#locationCollapse" class="collapsed" data-target="#locationCollapse">
-                <h4 class="list-group-item-heading">Lokalizacja</h4>
-            </a>
-            <div role="tabpanel" id="locationCollapse" class="list-group-item-text collapse">
-                <p>{{ event.location }}</p>
-                {# todo embed #}
-                <p>{{ event.location_video }}</p>
-                <div class="map"></div>
-            </div>
-        </li>
-        <li class="list-group-item">
-            <a role="tab" data-toggle="collapse" data-parent="#accordion" href="#rulesCollapse" class="collapsed" data-target="#rulesCollapse">
-                <h4 class="list-group-item-heading">Zasady</h4>
-            </a>
-            <div role="tabpanel" id="rulesCollapse" class="list-group-item-text collapse">
-                {% for field, value in event.get_rule_fields %}
-                    {% if value %}
-                        <h5>{{ field|title }}:</h5>
-                        <p>{{ value }}</p>
-                    {% endif %}
-                {% endfor %}
-            </div>
-        </li>
-    </ul>
-</div>
-
-
-<div class="card-columns">
-    {% for faction in event.factions.all %}
-        <div class="card">
-            <div class="card-header">
-                <span>{{ faction.name | upper }}</span>
+    {# jquery ui accordion #}
+    <div class="card">
+        <div class="card-header">
+            <h1>{{ event.title }}
+            {% if request.user.is_staff %}
                 <span class="pull-md-right">
-                {% if user_can_signup %}
-                    <a href="{% url 'cal:entry-create' event.pk faction.pk %}"
-                       class="btn btn-primary btn-sm" id="{{faction.name}}">+</a>
-                {% endif %}
+                    <a href="{% url 'cal:event-pdf-detail' event.pk %}" class="btn btn-primary">PDF</a>
                 </span>
-            </div>
-            <ul class="list-group list-group-flush">
-                {% for slot in faction.slot_set.all %}
-                    <li class="list-group-item">
-                        {{ slot.name }}:
-                        <span class="pull-xs-right">
-                            {% if slot.entry.user %}
-                                {{ slot.entry.user }}
-                                {% compare_users slot.entry.user request.user as is_request_user %}
+            {% endif %}
+            </h1>
+        </div>
+        <ul id="accordion" role="tablist" class="list-group list-group-flush">
+            <li class="list-group-item">
+                <a role="tab" data-toggle="collapse" data-parent="#accordion" href="#descriptionCollapse" data-target="#descriptionCollapse">
+                    <h4 class="list-group-item-heading">Opis</h4>
+                </a>
+                <p role="tabpanel" id="descriptionCollapse" class="list-group-item-text collapse in">
+                    {{ event.description }}
+                </p>
+            </li>
+            <li class="list-group-item">
+                <a role="tab" data-toggle="collapse" data-parent="#accordion" href="#datetimeCollapse" class="collapsed" data-target="#datetimeCollapse">
+                    <h4 class="list-group-item-heading">Data i Czas</h4>
+                </a>
+                <div role="tabpanel" id="datetimeCollapse" class="list-group-item-text collapse">
+                    <p>Zbiórka: {{ event.datetime|localize }}</p>
+                    <p>Początek rozgrywki: {{ event.starttime1|localize }} - {{ event.starttime2|localize }}</p>
+                    <p>Zakończenie rozgrywki: {{ event.endtime1|localize }} - {{ event.endtime2|localize }}</p>
+                </div>
+            </li>
+            <li class="list-group-item">
+                <a role="tab" data-toggle="collapse" data-parent="#accordion" href="#locationCollapse" class="collapsed" data-target="#locationCollapse"
+                    onclick="google.maps.event.trigger(map, 'resize');">
+                    <h4 class="list-group-item-heading">Lokalizacja</h4>
+                </a>
+                <div role="tabpanel" id="locationCollapse" class="list-group-item-text collapse">
+                    <p>{{ event.location }}</p>
+                    {# todo embed #}
+                    <p>{{ event.location_video }}</p>
+                    <div id="map"></div>
+                </div>
+            </li>
+            <li class="list-group-item">
+                <a role="tab" data-toggle="collapse" data-parent="#accordion" href="#rulesCollapse" class="collapsed" data-target="#rulesCollapse">
+                    <h4 class="list-group-item-heading">Zasady</h4>
+                </a>
+                <div role="tabpanel" id="rulesCollapse" class="list-group-item-text collapse">
+                    {% for field, value in event.get_rule_fields %}
+                        {% if value %}
+                            <h5>{{ field|title }}:</h5>
+                            <p>{{ value }}</p>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </li>
+        </ul>
+    </div>
+
+
+    <div class="card-columns">
+        {% for faction in event.factions.all %}
+            <div class="card">
+                <div class="card-header">
+                    <span>{{ faction.name | upper }}</span>
+                    <span class="pull-md-right">
+                    {% if user_can_signup %}
+                        <a href="{% url 'cal:entry-create' event.pk faction.pk %}"
+                           class="btn btn-primary btn-sm" id="{{faction.name}}">+</a>
+                    {% endif %}
+                    </span>
+                </div>
+                <ul class="list-group list-group-flush">
+                    {% for slot in faction.slot_set.all %}
+                        <li class="list-group-item">
+                            {{ slot.name }}:
+                            <span class="pull-xs-right">
+                                {% if slot.entry.user %}
+                                    {{ slot.entry.user }}
+                                    {% compare_users slot.entry.user request.user as is_request_user %}
+                                    {% if is_request_user %}
+                                        <a href="{% url 'cal:entry-delete' slot.entry.pk %}">
+                                            [-]
+                                        </a>
+                                    {% endif %}
+                                {% elif user_can_signup %}
+                                <a href="{% url 'cal:entry-create-slot' event.pk slot.pk %}">
+                                    ZAPISZ SIĘ
+                                </a>
+                                {% endif %}
+                            </span>
+                        </li>
+                    {% endfor %}
+                    {% for entry in faction.get_non_slot_players %}
+                        <li class="list-group-item">
+                            <span>-</span>
+                            <span class="pull-xs-right">{{ entry.user }}
+                                {% compare_users entry.user request.user as is_request_user %}
                                 {% if is_request_user %}
-                                    <a href="{% url 'cal:entry-delete' slot.entry.pk %}">
+                                    <a href="{% url 'cal:entry-delete' entry.pk %}">
                                         [-]
                                     </a>
                                 {% endif %}
-                            {% elif user_can_signup %}
-                            <a href="{% url 'cal:entry-create-slot' event.pk slot.pk %}">
-                                ZAPISZ SIĘ
-                            </a>
-                            {% endif %}
-                        </span>
-                    </li>
-                {% endfor %}
-                {% for entry in faction.get_non_slot_players %}
-                    <li class="list-group-item">
-                        <span>-</span>
-                        <span class="pull-xs-right">{{ entry.user }}
-                            {% compare_users entry.user request.user as is_request_user %}
-                            {% if is_request_user %}
-                                <a href="{% url 'cal:entry-delete' entry.pk %}">
-                                    [-]
-                                </a>
-                            {% endif %}
-                        </span>
-                    </li>
-                {% endfor %}
-            </ul>
-        </div>
-    {% endfor %}
-</div>
+                            </span>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endfor %}
+    </div>
 {% endblock %}
 {% block javascript %}
     {{ block.super }} 
-    <script>
-    $('#map').gmap3({
-      address: "Haltern am See, Weseler Str. 151",
-      zoom: 6,
-      mapTypeId : google.maps.MapTypeId.ROADMAP
-    });
-    </script>
-{% endblock %}
-{% block angular %}
-<script src="http://maps.google.com/maps/api/js"></script>
-<script src="https://cdn.jsdelivr.net/gmap3/7.1.0/gmap3.min.js"></script>
-<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD_JSx4ef6EfhXIBTrfK4XVVrVVqUsNVf4&region=PL"></script>
+        <script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD_JSx4ef6EfhXIBTrfK4XVVrVVqUsNVf4&callback=initMap">
+        </script>
+        <script>
+            $('#locationCollapse').on('shown.bs.collapse', function initMap() {
+                var center = new google.maps.LatLng({{ event.location }});
+
+                var map = new google.maps.Map(document.getElementById('map'), {
+                  center: center,
+                  zoom: 10
+                });
+
+                var marker_pos = {lat: {{ event.location_lat }}, lng: {{ event.location_lng }} };
+                var marker = new google.maps.Marker({
+                  position: center,
+                  map: map,
+                  title: 'Miejsce zbiórki'
+                });
+            });
+        </script>
 {% endblock %}

@@ -6,7 +6,9 @@
 {% for event in events %}
     <a class="no-style" href="{% url 'cal:event-detail' event.pk %}">
         <div class="card">
-          <img class="card-img-top img-fluid center-block" src="{{ event.poster.url }}" alt="Card image cap">
+            {% if event.poster %}
+                <img class="card-img-top img-fluid center-block" src="{{ event.poster.url }}" alt="Card image cap">
+            {% endif %}
           <div class="card-block">
           <h4 class="card-title">{{ event.title }}</h4>
           <p class="card-text">{{ event.description|truncatechars:300 }}</p>

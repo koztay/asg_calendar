@@ -84,6 +84,14 @@ class Event(TimeStampedModel):
         for field_name in self.rule_fields_names:
             yield self._meta.get_field(field_name).verbose_name, getattr(self, field_name)
 
+    @property
+    def location_lat(self):
+        return self.location.split(',')[0].strip()
+
+    @property
+    def location_lng(self):
+        return self.location.split(',')[1].strip()
+
 
 class PGroup(TimeStampedModel):
     name = models.CharField(max_length=255, verbose_name='nazwa')
