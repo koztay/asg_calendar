@@ -1,7 +1,6 @@
 {% extends 'base.html' %}
 {% load cal_tags %}
 {% load l10n %}
-{% load easy_maps_tags %}
 
 {% block title %}
     {{ event.title}}
@@ -57,9 +56,7 @@
                     <h4 class="list-group-item-heading">Lokalizacja</h4>
                 </a>
                 <div role="tabpanel" id="locationCollapse" class="list-group-item-text collapse">
-                    <p>{{ event.location }}</p>
-                    {# todo embed #}
-                    <p>{{ event.location_video }}</p>
+                    <p><a href="{{ event.location_video }}">Wideo z intrukcją dojazdu</a></p>
                     <div id="map"></div>
                 </div>
             </li>
