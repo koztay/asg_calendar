@@ -84,6 +84,7 @@ class Event(TimeStampedModel):
         for field_name in self.rule_fields_names:
             yield self._meta.get_field(field_name).verbose_name, getattr(self, field_name)
 
+    # properties potrzebne do wyświetlania mapy z lokalizacją
     @property
     def location_lat(self):
         return self.location.split(',')[0].strip()
@@ -134,7 +135,7 @@ class Slot(TimeStampedModel):
         verbose_name_plural = 'sloty'
 
     def __str__(self):
-        return '{0} - {1}'.format(self.name, self.faction.event)
+        return '{0} - {1} | {2}'.format(self.name, self.faction.event, self.faction)
 
 
 class Entry(TimeStampedModel):
@@ -150,4 +151,4 @@ class Entry(TimeStampedModel):
         ordering = ['pk']
 
     def __str__(self):
-        return "{0} - {1}".format(self.user, self.slot)
+        return "{0} - {1} | {2}".format(self.user, self.slot, self.faction)
