@@ -14,7 +14,7 @@ class User(AbstractUser):
     phone_regex = RegexValidator(regex=r'^\+?1?\d{9,15}$', message=(
                                  "Numer telefonu musi zostać wpisany w formacie: '+999999999'."))
     phone_number = models.CharField(validators=[phone_regex], max_length=255,
-                                    blank=True)  # validators should be a list
+                                    blank=True, verbose_name='numer telefonu')  # validators should be a list
 
     # First Name and Last Name do not cover name patterns
     # around the globe.
@@ -26,3 +26,6 @@ class User(AbstractUser):
 
     def get_absolute_url(self):
         return reverse('users:detail', kwargs={'username': self.username})
+
+User._meta.get_field('first_name').verbose_name = 'imię'
+User._meta.get_field('last_name').verbose_name = 'nazwisko'
