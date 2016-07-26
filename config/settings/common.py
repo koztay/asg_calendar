@@ -60,6 +60,7 @@ THIRD_PARTY_APPS = (
     'modelcluster',
     'compressor',
     'taggit',
+    'anymail',
 
 )
 
@@ -106,15 +107,10 @@ FIXTURE_DIRS = (
     str(APPS_DIR.path('fixtures')),
 )
 
-# EMAIL CONFIGURATION
-# ------------------------------------------------------------------------------
-EMAIL_BACKEND = env('DJANGO_EMAIL_BACKEND', default='django.core.mail.backends.smtp.EmailBackend')
-
 # MANAGER CONFIGURATION
 # ------------------------------------------------------------------------------
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#admins
 ADMINS = (
-    ("""lburdzy""", 'lukaszburdzy@gmail.com'),
 )
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#managers
@@ -323,3 +319,9 @@ PAGINATION_SETTINGS = {
 
     'SHOW_FIRST_PAGE_WHEN_INVALID': True,
 }
+
+# Anymail config
+ANYMAIL = {
+    "MAILGUN_API_KEY": "<your Mailgun key>",
+}
+EMAIL_BACKEND = "anymail.backends.mailgun.MailgunBackend"  # or sendgrid.SendGridBackend, or...
