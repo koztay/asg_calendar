@@ -141,3 +141,7 @@ CACHES = {
 
 
 # Your production stuff: Below this line define 3rd party library settings
+
+ANYMAIL = {
+    "MAILGUN_API_KEY": MAILGUN_ACCESS_KEY,
+}
