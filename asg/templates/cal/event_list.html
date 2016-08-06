@@ -1,11 +1,25 @@
 {% extends 'base.html' %}
 {% block title %}Lista wydarzeń{% endblock %}
 {% block content %}
-<p>Events:</p>
-<ul>
+<h1>Wydarzenia:</h1>
+<div class="card-columns">
 {% for event in events %}
-    <li><a href="{% url 'cal:event-detail' event.pk %}">{{event.title}}</a></li>
+    <a class="no-style" href="{% url 'cal:event-detail' event.pk %}">
+        <div class="card">
+            {% if event.poster %}
+                <img class="card-img-top img-fluid center-block" src="{{ event.poster.url }}" alt="Card image cap">
+            {% endif %}
+          <div class="card-block">
+          <h4 class="card-title">{{ event.title }}</h4>
+          <p class="card-text">{{ event.description|truncatechars:300 }}</p>
+          </div>
+        </div>
+    </a>
+{% empty %}
+    <h1>Brak wydarzeń spełniających kryteria</h1>
 {% endfor %}
-</ul>
+</div>
+
+{% include '_pagination.html' %}
 {% endblock %}
 

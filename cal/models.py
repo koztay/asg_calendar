@@ -1,9 +1,20 @@
-# Create your models here.
 from django.conf import settings
 from django.db import models
 from django.utils import timezone
 from location_field.models.plain import PlainLocationField
 from django_extensions.db.models import TimeStampedModel
+from django.core.exceptions import ValidationError
+
+
+def validate_slot_number(value):
+    try:
+        faction = Faction.objects.get(id=value)
+        if faction.event.slot_limit_reached():
+            raise ValidationError(
+                    'Przekroczono limit miejsc',
+                    )
+    except:
+        pass
 
 
 class Event(TimeStampedModel):
@@ -37,6 +48,8 @@ class Event(TimeStampedModel):
     link = models.URLField(blank=True)
     is_open = models.BooleanField(default=True, verbose_name='otwarte')
 
+    rule_fields_names = ['fps', 'ammo', 'terms', 'entry_fee', 'rules', 'info']
+
     class Meta:
         verbose_name = 'wydarzenie'
         verbose_name_plural = 'wydarzenia'
@@ -51,21 +64,34 @@ class Event(TimeStampedModel):
             users.extend(faction.users.all())
         return users
 
-    def user_can_sign_up(self, user):
-        if user.is_anonymous():
-            return False
+    def slot_limit_reached(self):
         try:
             slot_limit_exceeded = len(self.signed_up_users) >= self.slot_limit
+            if slot_limit_exceeded:
+                return True
+            return False
         except TypeError:
-            slot_limit_exceeded = False
-        if user not in self.signed_up_users and self.is_open and not slot_limit_exceeded:
-            return True
-        return False
+            return False
 
-    # def attrs(self):
-    #     # for attr, value in self._meta.get_fields():
-    #     for attr, value in self.__dict__.iteritems():
-    #         yield attr, value
+    def user_can_sign_up(self, user):
+        if user.is_anonymous() or self.slot_limit_reached() or not self.is_open or \
+                user in self.signed_up_users:
+            return False
+        return True
+
+    # generator iterujacy po liscie nazw pol i zwracajacy pare: nazwa pola, wartosc pola
+    def get_rule_fields(self):
+        for field_name in self.rule_fields_names:
+            yield self._meta.get_field(field_name).verbose_name, getattr(self, field_name)
+
+    # properties potrzebne do wyświetlania mapy z lokalizacją
+    @property
+    def location_lat(self):
+        return self.location.split(',')[0].strip()
+
+    @property
+    def location_lng(self):
+        return self.location.split(',')[1].strip()
 
 
 class PGroup(TimeStampedModel):
@@ -86,7 +112,7 @@ class Faction(TimeStampedModel):
     event = models.ForeignKey(Event, related_name='factions')
     name = models.CharField(max_length=255)
     users = models.ManyToManyField(settings.AUTH_USER_MODEL, through='cal.Entry',
-                                  related_name='factions', verbose_name='użytkownicy')
+                                   related_name='factions', verbose_name='użytkownicy')
 
     class Meta:
         verbose_name = 'frakcja'
@@ -102,7 +128,6 @@ class Faction(TimeStampedModel):
 class Slot(TimeStampedModel):
     name = models.CharField(max_length=200, verbose_name='nazwa',
                             blank=False, null=False)
-    # event = models.ForeignKey(Event)
     faction = models.ForeignKey(Faction)
 
     class Meta:
@@ -110,14 +135,15 @@ class Slot(TimeStampedModel):
         verbose_name_plural = 'sloty'
 
     def __str__(self):
-        return '{0} - {1}'.format(self.name, self.faction.event)
+        return '{0} - {1} | {2}'.format(self.name, self.faction.event, self.faction)
 
 
 class Entry(TimeStampedModel):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='entries',
                              verbose_name='użytkownik')
     slot = models.OneToOneField(Slot, blank=True, null=True)
-    faction = models.ForeignKey(Faction, related_name='entries', blank=False, null=False)
+    faction = models.ForeignKey(Faction, related_name='entries', blank=False, null=False,
+                                validators=[validate_slot_number])
 
     class Meta:
         verbose_name = 'zapis'
@@ -125,4 +151,4 @@ class Entry(TimeStampedModel):
         ordering = ['pk']
 
     def __str__(self):
-        return "{0} - {1}".format(self.user, self.slot)
+        return "{0} - {1} | {2}".format(self.user, self.slot, self.faction)

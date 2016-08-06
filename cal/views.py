@@ -1,5 +1,4 @@
-# from django.shortcuts import render, render_to_response
-from braces.views import LoginRequiredMixin, UserPassesTestMixin
+from braces.views import LoginRequiredMixin, UserPassesTestMixin, StaffuserRequiredMixin
 from django.shortcuts import redirect
 from django.views.generic.edit import DeleteView
 from django.conf import settings
@@ -12,9 +11,15 @@ from cal.permissions import IsOwnerOrReadOnly
 from django.views.generic import ListView, DetailView, CreateView
 from django.utils import timezone
 from django.core.urlresolvers import reverse, reverse_lazy
+from pure_pagination.mixins import PaginationMixin
+from django.template.loader import get_template
+from django.http import HttpResponse
+from weasyprint import HTML
 
 
-# API Views
+#
+# ---- API Views
+#
 class EventViewSet(viewsets.ModelViewSet):
     """
     API endpoint for events
@@ -63,9 +68,17 @@ class EntryViewSet(viewsets.ModelViewSet):
 #
 # ---- Generic Django Views
 #
-class EventListView(ListView):
-    queryset = Event.objects.filter(datetime__gte=timezone.now())
+class EventListView(PaginationMixin, ListView):
+    queryset = Event.objects.filter(datetime__gte=timezone.now()).order_by('datetime')
     context_object_name = 'events'
+    paginate_by = 6
+
+
+class EventArchiveView(PaginationMixin, ListView):
+    queryset = Event.objects.all()
+    context_object_name = 'events'
+    paginate_by = 6
+    template_name = 'cal/event_list.html'
 
 
 class EventDetailView(DetailView):
@@ -77,19 +90,25 @@ class EventDetailView(DetailView):
         context['user_can_signup'] = self.object.user_can_sign_up(self.request.user)
         return context
 
-    # def attrs(self):
-    #     # for attr, value in self._meta.get_fields():
-    #     for attr, value in self.__dict__.iteritems():
-    #         yield attr, value
 
-
-class EntryCreateView(LoginRequiredMixin, CreateView):
+class EntryCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     model = Entry
     fields = []
     login_url = settings.LOGIN_REDIRECT_URL
 
     def get_success_url(self):
         return reverse('cal:event-detail', kwargs={'pk': self.kwargs.get('pk')})
+
+    def get_event(self):
+        faction_id = self.kwargs.get('faction_id')
+        slot_id = self.kwargs.get('slot_id')
+        if faction_id:
+            faction = Faction.objects.get(id=faction_id)
+            event = faction.event
+        elif slot_id:
+            slot = Slot.objects.get(id=slot_id)
+            event = slot.faction.event
+        return event
 
     def form_valid(self, form):
         form.instance.user = self.request.user
@@ -102,6 +121,13 @@ class EntryCreateView(LoginRequiredMixin, CreateView):
             form.instance.slot = slot
             form.instance.faction = Faction.objects.get(id=slot.faction.id)
         return super(EntryCreateView, self).form_valid(form)
+
+    def test_func(self, user):
+        event = self.get_event()
+        return event.user_can_sign_up(user)
+
+    def no_permissions_fail(self, request=None):
+        return redirect(reverse_lazy('cal:event-detail', kwargs={'pk': self.get_event().pk}))
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -121,7 +147,7 @@ class EntryDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         return self.get_object().user == user
 
     def no_permissions_fail(self, request=None):
-        return redirect(reverse_lazy('cal:event-details', kwargs={'pk': self.get_object().faction.event.pk}))
+        return redirect(reverse_lazy('cal:event-detail', kwargs={'pk': self.get_object().faction.event.pk}))
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -129,4 +155,16 @@ class EntryDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         return context
 
 
+class EventDetailPDFView(StaffuserRequiredMixin, DetailView):
+    template_name = 'cal/event_list_pdf.html'
+    model = Event
+    context_object_name = 'event'
 
+    def render_to_response(self, context, **response_kwargs):
+        context = self.get_context_data()
+        html_template = get_template(self.template_name)
+        rendered_html = html_template.render(context).encode(encoding="UTF-8")
+        pdf_file = HTML(string=rendered_html).write_pdf()
+        http_response = HttpResponse(pdf_file, content_type='application/pdf')
+        http_response['Content-Disposition'] = 'filename="report.pdf"'
+        return http_response

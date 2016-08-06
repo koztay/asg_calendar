@@ -25,8 +25,9 @@ SECRET_KEY = env("DJANGO_SECRET_KEY", default='CHANGEME!!!@y5l%+7k&*4v2*d(e#l#kw
 # ------------------------------------------------------------------------------
 EMAIL_HOST = 'localhost'
 EMAIL_PORT = 1025
-EMAIL_BACKEND = env('DJANGO_EMAIL_BACKEND',
-                    default='django.core.mail.backends.console.EmailBackend')
+# EMAIL_BACKEND = env('DJANGO_EMAIL_BACKEND',
+#                     default='django.core.mail.backends.console.EmailBackend')
+EMAIL_BACKEND = "anymail.backends.mailgun.MailgunBackend"
 
 # CACHING
 # ------------------------------------------------------------------------------
@@ -56,3 +57,6 @@ DEBUG_TOOLBAR_CONFIG = {
 TEST_RUNNER = 'django.test.runner.DiscoverRunner'
 
 # Your local stuff: Below this line define 3rd party library settings
+ANYMAIL = {
+    "MAILGUN_API_KEY": env("DJANGO_MAILGUN_API_KEY"),
+}

@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, unicode_literals
 
-from django import forms
 from django.contrib import admin
+from django import forms
 from django.contrib.auth.admin import UserAdmin as AuthUserAdmin
 from django.contrib.auth.forms import UserChangeForm, UserCreationForm
 
@@ -24,6 +24,7 @@ class MyUserCreationForm(UserCreationForm):
     class Meta(UserCreationForm.Meta):
         model = User
         # exclude = ['first_name']
+        # fields = ['first_name', 'last_name', 'phone_number']
 
     def clean_username(self):
         username = self.cleaned_data["username"]
@@ -38,3 +39,9 @@ class MyUserCreationForm(UserCreationForm):
 class UserAdmin(AuthUserAdmin):
     form = MyUserChangeForm
     add_form = MyUserCreationForm
+
+    fieldsets = AuthUserAdmin.fieldsets + (
+            ('User Profile', {'fields': ('phone_number',)}),
+            )
+    list_display = ('username', 'email', 'first_name', 'last_name')
+    search_fields = ('username', 'email', 'first_name', 'last_name')

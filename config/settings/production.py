@@ -54,7 +54,8 @@ SECURE_SSL_REDIRECT = env.bool("DJANGO_SECURE_SSL_REDIRECT", default=True)
 # ------------------------------------------------------------------------------
 # Hosts/domain names that are valid for this site
 # See https://docs.djangoproject.com/en/1.6/ref/settings/#allowed-hosts
-ALLOWED_HOSTS = env.list('DJANGO_ALLOWED_HOSTS', default=['example.com'])
+# ALLOWED_HOSTS = env.list('DJANGO_ALLOWED_HOSTS', default=['example.com'])
+ALLOWED_HOSTS = ['asg.intactilis.pl', '78.47.75.214']
 # END SITE CONFIGURATION
 
 INSTALLED_APPS += ("gunicorn", )
@@ -93,20 +94,19 @@ MEDIA_URL = '/media/'
 
 # Static Assets
 # ------------------------
-STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
+# STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
 
 
 # EMAIL
 # ------------------------------------------------------------------------------
 DEFAULT_FROM_EMAIL = env('DJANGO_DEFAULT_FROM_EMAIL',
                          default='asg <noreply@example.com>')
-# EMAIL_BACKEND = 'django_mailgun.MailgunBackend'
-# MAILGUN_ACCESS_KEY = env('DJANGO_MAILGUN_API_KEY')
-# MAILGUN_SERVER_NAME = env('DJANGO_MAILGUN_SERVER_NAME')
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_BACKEND = 'django_mailgun.MailgunBackend'
+MAILGUN_ACCESS_KEY = env('DJANGO_MAILGUN_API_KEY')
+MAILGUN_SERVER_NAME = env('DJANGO_MAILGUN_SERVER_NAME')
 EMAIL_SUBJECT_PREFIX = env("DJANGO_EMAIL_SUBJECT_PREFIX", default='[asg] ')
 SERVER_EMAIL = env('DJANGO_SERVER_EMAIL', default=DEFAULT_FROM_EMAIL)
-EMAIL_BACKEND = "djrill.mail.backends.djrill.DjrillBackend"
-MANDRILL_API_KEY = '_FYdWLNs1EkJ8ERz9fdaFw'
 
 # TEMPLATE CONFIGURATION
 # ------------------------------------------------------------------------------
@@ -141,3 +141,7 @@ CACHES = {
 
 
 # Your production stuff: Below this line define 3rd party library settings
+
+ANYMAIL = {
+    "MAILGUN_API_KEY": MAILGUN_ACCESS_KEY,
+}

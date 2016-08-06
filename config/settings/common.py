@@ -38,19 +38,38 @@ THIRD_PARTY_APPS = (
     'crispy_forms',  # Form layouts
     'allauth',  # registration
     'allauth.account',  # registration
-    'allauth.socialaccount',  # registration
+    # 'allauth.socialaccount',  # registration
     'rest_framework',
     'location_field',
     'guardian',
     'django_extensions',
     'nested_admin',
+    'pure_pagination',
+    'wagtail.wagtailforms',
+    'wagtail.wagtailredirects',
+    'wagtail.wagtailembeds',
+    'wagtail.wagtailsites',
+    'wagtail.wagtailusers',
+    'wagtail.wagtailsnippets',
+    'wagtail.wagtaildocs',
+    'wagtail.wagtailimages',
+    'wagtail.wagtailsearch',
+    'wagtail.wagtailadmin',
+    'wagtail.wagtailcore',
+
+    'modelcluster',
+    'compressor',
+    'taggit',
+    'anymail',
+
 )
 
 # Apps specific for this project go here.
 LOCAL_APPS = (
     'asg.users',  # custom users app
     # Your stuff: custom apps go here
-    'cal'
+    'cal',
+    'cms',
 )
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
@@ -66,6 +85,8 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'wagtail.wagtailcore.middleware.SiteMiddleware',
+    'wagtail.wagtailredirects.middleware.RedirectMiddleware',
 )
 
 # MIGRATIONS CONFIGURATION
@@ -86,15 +107,10 @@ FIXTURE_DIRS = (
     str(APPS_DIR.path('fixtures')),
 )
 
-# EMAIL CONFIGURATION
-# ------------------------------------------------------------------------------
-EMAIL_BACKEND = env('DJANGO_EMAIL_BACKEND', default='django.core.mail.backends.smtp.EmailBackend')
-
 # MANAGER CONFIGURATION
 # ------------------------------------------------------------------------------
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#admins
 ADMINS = (
-    ("""lburdzy""", 'lukaszburdzy@gmail.com'),
 )
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#managers
@@ -281,8 +297,8 @@ LOGGING = {
 
 # Your common stuff: Below this line define 3rd party library settings
 REST_FRAMEWORK = {
-    # 'DEFAULT_PERMISSION_CLASSES': ('rest_framework.permissions.IsAdminUser',),
-    'DEFAULT_PERMISSION_CLASSES': ('rest_framework.permissions.IsAuthenticatedOrReadOnly',),
+    'DEFAULT_PERMISSION_CLASSES': ('rest_framework.permissions.IsAdminUser',),
+    # 'DEFAULT_PERMISSION_CLASSES': ('rest_framework.permissions.IsAuthenticatedOrReadOnly',),
     'PAGE_SIZE': 10,
     # 'DATETIME_FORMAT': "%d-%m-%Y %H:%M",
     # 'DATETIME_INPUT_FORMAT': ['%d-%m-%Y %H:%M'],
@@ -292,3 +308,20 @@ REST_FRAMEWORK = {
 
 # DJANGO GUARDIAN SETTING
 ANONYMOUS_USER_ID = -1
+
+# WAGTAIL SETTINGS
+WAGTAIL_SITE_NAME = 'My Example Site'
+
+
+PAGINATION_SETTINGS = {
+    'PAGE_RANGE_DISPLAYED': 5,
+    'MARGIN_PAGES_DISPLAYED': 2,
+
+    'SHOW_FIRST_PAGE_WHEN_INVALID': True,
+}
+
+# Anymail config
+ANYMAIL = {
+    "MAILGUN_API_KEY": "<your Mailgun key>",
+}
+EMAIL_BACKEND = "anymail.backends.mailgun.MailgunBackend"  # or sendgrid.SendGridBackend, or...
