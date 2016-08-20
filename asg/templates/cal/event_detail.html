@@ -20,6 +20,7 @@
     {{ block.super }}
 {% endblock %}
 {% block content %}
+    <h1 id="weather">{{ weather_summary }}</h1>
     {# jquery ui accordion #}
     <div class="card">
         <div class="card-header">
@@ -129,7 +130,7 @@
     </div>
 {% endblock %}
 {% block javascript %}
-    {{ block.super }} 
+    {{ block.super }}
         <script async defer
         src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD_JSx4ef6EfhXIBTrfK4XVVrVVqUsNVf4&callback=initMap">
         </script>

@@ -325,3 +325,5 @@ ANYMAIL = {
     "MAILGUN_API_KEY": "<your Mailgun key>",
 }
 EMAIL_BACKEND = "anymail.backends.mailgun.MailgunBackend"  # or sendgrid.SendGridBackend, or...
+
+FORECASTIO_API_KEY = env('DJANGO_FORECASTIO_API_KEY')

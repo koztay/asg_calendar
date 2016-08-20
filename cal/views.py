@@ -2,6 +2,7 @@ from braces.views import LoginRequiredMixin, UserPassesTestMixin, StaffuserRequi
 from django.shortcuts import redirect
 from django.views.generic.edit import DeleteView
 from django.conf import settings
+from forecastio import load_forecast
 
 from cal.models import Event, PGroup, Faction, Slot, Entry
 from cal.serializers import EventSerializer, FactionSerializer, SlotSerializer
@@ -87,8 +88,20 @@ class EventDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['user_can_signup'] = self.object.user_can_sign_up(self.request.user)
+        context['user_can_signup'] = self.object.user_can_sign_up(
+            self.request.user
+        )
+        context['weather_summary'] = self.get_weather_forecast(self.object)
+        # import ipdb; ipdb.set_trace()
         return context
+
+    @staticmethod
+    def get_weather_forecast(event):
+        api_key = settings.FORECASTIO_API_KEY
+        lat = event.location_lat
+        lng = event.location_lng
+        forecast = load_forecast(api_key, lat, lng, event.datetime)
+        return forecast.daily().data[0].summary
 
 
 class EntryCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
