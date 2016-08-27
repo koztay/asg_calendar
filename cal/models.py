@@ -87,11 +87,14 @@ class Event(TimeStampedModel):
     # properties potrzebne do wyświetlania mapy z lokalizacją
     @property
     def location_lat(self):
-        return self.location.split(',')[0].strip()
+        return self.get_location_coordinates()[0]
 
     @property
     def location_lng(self):
-        return self.location.split(',')[1].strip()
+        return self.get_location_coordinates()[1]
+
+    def get_location_coordinates(self):
+        return tuple(map(float, self.location.split(',')))
 
 
 class PGroup(TimeStampedModel):

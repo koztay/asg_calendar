@@ -21,6 +21,6 @@ class HomePage(Page):
         ImageChooserPanel('poster')
     ]
 
-    search_fields = Page.search_fields + (
+    search_fields = Page.search_fields + [
         index.SearchField('body'),
-    )
+    ]

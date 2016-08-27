@@ -45,3 +45,5 @@ django-location-field
 django-nested-admin>=3.0
 django-pure-pagination
 django-anymail
+git+https://github.com/lburdzy/forecastiopy3.git
+wagtail==1.6.1

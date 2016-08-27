@@ -2,7 +2,7 @@ from braces.views import LoginRequiredMixin, UserPassesTestMixin, StaffuserRequi
 from django.shortcuts import redirect
 from django.views.generic.edit import DeleteView
 from django.conf import settings
-from forecastio import load_forecast
+from forecastiopy import ForecastIO
 
 from cal.models import Event, PGroup, Faction, Slot, Entry
 from cal.serializers import EventSerializer, FactionSerializer, SlotSerializer
@@ -100,8 +100,14 @@ class EventDetailView(DetailView):
         api_key = settings.FORECASTIO_API_KEY
         lat = event.location_lat
         lng = event.location_lng
-        forecast = load_forecast(api_key, lat, lng, event.datetime)
-        return forecast.daily().data[0].summary
+        polish = ForecastIO.ForecastIO.LANG_POLISH
+        try:
+            forecast = ForecastIO.ForecastIO(apikey=api_key, lang=polish,
+                                             latitude=lat, longitude=lng,
+                                             forecast_time=int(event.datetime.timestamp()))
+            return forecast.daily['data'][0]
+        except TypeError:
+            return None
 
 
 class EntryCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
