@@ -20,7 +20,6 @@
     {{ block.super }}
 {% endblock %}
 {% block content %}
-    <h1 id="weather">{{ weather_summary }}</h1>
     {# jquery ui accordion #}
     <div class="card">
         <div class="card-header">
@@ -32,17 +31,19 @@
             {% endif %}
             </h1>
         </div>
-        <ul id="accordion" role="tablist" class="list-group list-group-flush">
-            <li class="list-group-item">
-                <a role="tab" data-toggle="collapse" data-parent="#accordion" href="#descriptionCollapse" data-target="#descriptionCollapse">
+        <ul id="accordion" role="tablist" class="list-group list-group-flush" aria-multiselectable="true">
+            <li class="list-group-item panel">
+                <a role="tab" data-toggle="collapse" data-parent="#accordion"
+                   href="#descriptionCollapse" data-target="#descriptionCollapse">
                     <h4 class="list-group-item-heading">Opis</h4>
                 </a>
                 <p role="tabpanel" id="descriptionCollapse" class="list-group-item-text collapse in">
                     {{ event.description }}
                 </p>
             </li>
-            <li class="list-group-item">
-                <a role="tab" data-toggle="collapse" data-parent="#accordion" href="#datetimeCollapse" class="collapsed" data-target="#datetimeCollapse">
+            <li class="list-group-item panel">
+                <a role="tab" data-toggle="collapse" data-parent="#accordion"
+                   href="#datetimeCollapse" class="collapsed" data-target="#datetimeCollapse">
                     <h4 class="list-group-item-heading">Data i Czas</h4>
                 </a>
                 <div role="tabpanel" id="datetimeCollapse" class="list-group-item-text collapse">
@@ -51,8 +52,9 @@
                     <p>Zakończenie rozgrywki: {{ event.endtime1|localize }} - {{ event.endtime2|localize }}</p>
                 </div>
             </li>
-            <li class="list-group-item">
-                <a role="tab" data-toggle="collapse" data-parent="#accordion" href="#locationCollapse" class="collapsed" data-target="#locationCollapse"
+            <li class="list-group-item panel">
+                <a role="tab" data-toggle="collapse" data-parent="#accordion"
+                   href="#locationCollapse" class="collapsed" data-target="#locationCollapse"
                     onclick="google.maps.event.trigger(map, 'resize');">
                     <h4 class="list-group-item-heading">Lokalizacja</h4>
                 </a>
@@ -61,8 +63,9 @@
                     <div id="map"></div>
                 </div>
             </li>
-            <li class="list-group-item">
-                <a role="tab" data-toggle="collapse" data-parent="#accordion" href="#rulesCollapse" class="collapsed" data-target="#rulesCollapse">
+            <li class="list-group-item panel">
+                <a role="tab" data-toggle="collapse" data-parent="#accordion"
+                   href="#rulesCollapse" class="collapsed" data-target="#rulesCollapse">
                     <h4 class="list-group-item-heading">Zasady</h4>
                 </a>
                 <div role="tabpanel" id="rulesCollapse" class="list-group-item-text collapse">
@@ -73,6 +76,15 @@
                         {% endif %}
                     {% endfor %}
                 </div>
+            </li>
+            <li class="list-group-item panel">
+                <a role="tab" data-toggle="collapse" data-parent="#accordion"
+                   href="#weatherCollapse" data-target="#weatherCollapse">
+                    <h4 class="list-group-item-heading">Pogoda</h4>
+                </a>
+                <p role="tabpanel" id="weatherCollapse" class="list-group-item-text collapse">
+                    {{ weather_summary }}
+                </p>
             </li>
         </ul>
     </div>
