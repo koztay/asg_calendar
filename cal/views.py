@@ -91,8 +91,7 @@ class EventDetailView(DetailView):
         context['user_can_signup'] = self.object.user_can_sign_up(
             self.request.user
         )
-        context['weather_summary'] = self.get_weather_forecast(self.object)
-        # import ipdb; ipdb.set_trace()
+        context['weather'] = self.get_weather_forecast(self.object)
         return context
 
     @staticmethod

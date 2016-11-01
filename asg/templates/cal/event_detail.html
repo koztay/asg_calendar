@@ -83,7 +83,15 @@
                     <h4 class="list-group-item-heading">Pogoda</h4>
                 </a>
                 <p role="tabpanel" id="weatherCollapse" class="list-group-item-text collapse">
-                    {{ weather_summary }}
+                    {{ weather }}
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">{{ weather.summary }}</li>
+                        <li class="list-group-item">{{ weather.temperatureMax }}</li>
+                        <li class="list-group-item">{{ weather.temperatureMin }}</li>
+                        <li class="list-group-item"></li>
+                        <li class="list-group-item"></li>
+                        <li class="list-group-item"></li>
+                    </ul>
                 </p>
             </li>
         </ul>
